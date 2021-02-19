@@ -1,0 +1,5 @@
+h5py==2.9.0
+Keras==2.3.1
+tqdm==4.23.4
+unittest2==1.1.0
+scikit-learn

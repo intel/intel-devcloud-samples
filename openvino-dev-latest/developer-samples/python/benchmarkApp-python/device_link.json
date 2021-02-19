@@ -1,0 +1,10 @@
+{
+"Intel® Movidius™ Myriad™ X HDDL": "https://software.intel.com/content/www/us/en/develop/topics/iot/hardware/vision-accelerator-movidius-vpu.html",
+"Intel® Core™ CPU": "https://ark.intel.com/content/www/us/en/ark/products/88186/intel-core-i5-6500te-processor-6m-cache-up-to-3-30-ghz.html",
+"Intel® Xeon® CPU": "https://ark.intel.com/content/www/us/en/ark/products/88178/intel-xeon-processor-e3-1268l-v5-8m-cache-2-40-ghz.html",
+"Intel® HD Graphics 530 GPU": "https://www.intel.com/content/www/us/en/support/products/88345/graphics/graphics-for-6th-generation-intel-processors/intel-hd-graphics-530.html",
+"MULTI:Intel® Core™ CPU,Intel® HD Graphics 530 GPU": "https://software.intel.com/en-us/iot/hardware/iei-tank-dev-kit-core",
+"MULTI:Intel® Movidius™ Myriad™ X HDDL,Intel® Core™ CPU": "https://software.intel.com/en-us/iot/hardware/iei-tank-dev-kit-core",    
+"Intel® Neural Compute Stick 2": "https://software.intel.com/content/www/us/en/develop/topics/iot/hardware/vision-accelerator-movidius-vpu.html"   
+}
+
