@@ -1,3 +1,7 @@
 # Reference samples
 
-Reference sample implementations for container architecture
+Object detection container sample 
+This include 
+- dockerfile/ubuntu18/
+- Updated Object Detection py without quarpo,application writer, job id
+-
