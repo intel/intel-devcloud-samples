@@ -19,5 +19,5 @@ Steps to run containerized Object detection sample
 
 4. Execute the Object detection sample inside the docker container using jupyterhub from command line :
        a. Execute jupyterhub (Inside the sample folder)
-	   b  Open localhost at port 8000 in the browser with the url as prompted on the jupyterhub console output when running the above[a] command 
+	   b  Open localhost at port 8000 in the browser with the url as prompted on the jupyterhub console output when running the above[a] command with user/pwd as intel/intel 
 	   c. Open the notebook objection_detection_container_ver1.ipynb and execute each cell 
