@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="581.258px" height="455px" viewBox="0 0 581.258 455" xml:space="preserve">
+<g>
+	<rect x="69.291" y="0" rx="25" ry="25" width="84.686" height="455" fill="#FFCCCC" />
+	<rect x="153.977" y="0" rx="25" ry="25" width="84.686" height="455" fill="#FFCC99" />
+	<rect x="238.663" y="0" rx="25" ry="25" width="61.59" height="455" fill="#FFFF99" />
+	<rect x="300.253" y="0" rx="25" ry="25" width="57.74" height="455" fill="#99FF99" />
+	<rect x="357.993" y="0" rx="25" ry="25" width="111.631" height="455" fill="#99CCFF" />
+	<rect x="469.624" y="0" rx="25" ry="25" width="46.196" height="455" fill="#CC99FF" />
+</g>
+<g>
+	<rect x="69.291" y="385" rx="25" ry="25" width="169.372" height="70" fill="#000000" opacity="0.3" />
+	<rect x="238.663" y="385" rx="25" ry="25" width="230.961" height="70" fill="#000000" opacity="0.3" />
+</g>
+<path fill="none" stroke="#000000" stroke-width="4" stroke-linejoin="round" d="M0,307.954h69.289c14.333-0.609,13.485-36.042,41.262-36.042c31.181,0,29.764,35.433,43.425,36.042h84.686l11.549,46.193L269.458,69.29l15.398,304.102l15.398-65.438h57.74c19.246-3.852,26.639-76.293,53.891-77.221c28.533-0.973,38.494,73.371,57.74,77.221c7.33,0,11.91-12.352,23.098-11.549c9.906,0.709,13.484,11.549,19.248,11.549h69.287"/>
+<g>
+	<text x="111.634" y="45" text-anchor="middle" font-family="Liberation Sans, sans-serif"><tspan font-size="26">P</tspan><tspan x="111.634" dy="14.4" font-size="12">Wave</tspan></text>
+	<text x="196.32" y="45" text-anchor="middle" font-family="Liberation Sans, sans-serif"><tspan font-size="26">PR</tspan><tspan x="196.32" dy="14.4" font-size="12">Segment</tspan></text>
+	<text x="269.458" y="45" text-anchor="middle" font-family="Liberation Sans, sans-serif"><tspan font-size="26">QRS</tspan><tspan x="269.458" dy="14.4" font-size="12">Complex</tspan></text>
+	<text x="329.123" y="45" text-anchor="middle" font-family="Liberation Sans, sans-serif"><tspan font-size="26">ST</tspan><tspan x="329.123" dy="14.4" font-size="12">Segment</tspan></text>
+	<text x="413.808" y="45" text-anchor="middle" font-family="Liberation Sans, sans-serif"><tspan font-size="26">T</tspan><tspan x="413.808" dy="14.4" font-size="12">Wave</tspan></text>
+	<text x="492.722" y="45" text-anchor="middle" font-family="Liberation Sans, sans-serif"><tspan font-size="26">U</tspan><tspan x="492.722" dy="14.4" font-size="12">Wave</tspan></text>
+	<text x="153.977" y="421" text-anchor="middle" font-family="Liberation Sans, sans-serif"><tspan font-size="26">PR</tspan><tspan x="153.977" dy="14.4" font-size="12">Interval</tspan></text>
+	<text x="354.144" y="421" text-anchor="middle" font-family="Liberation Sans, sans-serif"><tspan font-size="26">QT</tspan><tspan x="354.144" dy="14.4" font-size="12">Interval</tspan></text>
+</g>
+</svg>
