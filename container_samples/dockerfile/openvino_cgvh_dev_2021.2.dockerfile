@@ -267,19 +267,82 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
 
+
+USER root
+RUN apt-get  -y update
+RUN apt-get install ffmpeg libsm6 libxext6 -y 
+RUN chmod 0777 ${INTEL_OPENVINO_DIR}/python
+#RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
+
+ADD Anaconda3-2019.03-Linux-x86_64.sh ${INTEL_OPENVINO_DIR}/python/samples/ 
+ADD install_jupyterhub.sh  ${INTEL_OPENVINO_DIR}/python/samples/ 
+RUN chmod 0755 ${INTEL_OPENVINO_DIR}/python/samples/Anaconda3-2019.03-Linux-x86_64.sh
+RUN bash ${INTEL_OPENVINO_DIR}/python/samples/Anaconda3-2019.03-Linux-x86_64.sh -b && \ 
+    echo "export PATH="/root/anaconda3/bin:$PATH"" >> ~/.bashrc && \
+    /bin/bash -c "source ~/.bashrc"
+
+RUN chmod 777 /opt/intel/openvino_2021.2.185/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites_caffe.sh 
+RUN chmod 777 /opt/intel/openvino_2021.2.185/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh 
+
 RUN apt-get update && \
     apt-get autoremove -y dpkg-dev && \
     rm -rf /var/lib/apt/lists/*
+ 
 
+RUN groupadd intel
+
+ENV USERNAME=intel
+ENV PASSWORD=intel
+
+RUN useradd -m -p $(openssl passwd -1 ${PASSWORD}) -s /bin/bash -g sudo ${USERNAME}
+RUN usermod -a -G  intel  intel
 
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
-ADD object-detection-python ${INTEL_OPENVINO_DIR}/python/samples/
 
-#Added for running dev cloud samples
-USER root
-WORKDIR ${INTEL_OPENVINO_DIR}/python/samples
+ADD object-detection-python ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python
+RUN chown -R  intel:intel  ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}/python  ${INTEL_OPENVINO_DIR}/python/samples  ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python ${INTEL_OPENVINO_DIR}/deployment_tools ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites  /var/lib/dpkg
 
-#RUN chmod 0755 ${INTEL_OPENVINO_DIR}/python/samples/run_object_detection.sh
-#ENTRYPOINT ${INTEL_OPENVINO_DIR}/python/samples/run_object_detection.sh
-CMD ["/bin/bash"]
+RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/mo.py
+RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/run_sample.sh
+RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/*.sh
+RUN apt-get install ffmpeg libsm6 libxext6 -y 
+
+USER intel
+
+
+RUN bash ${INTEL_OPENVINO_DIR}/python/samples/Anaconda3-2019.03-Linux-x86_64.sh -b 
+    
+    
+#Set path to conda
+ENV PATH /home/intel/anaconda3/bin:$PATH
+RUN pip install --no-cache jupyterhub
+RUN pip install notebook
+RUN conda install -c conda-forge configurable-http-proxy
+RUN conda install -c conda-forge ruamel.yaml
+ENV PATH ${INTEL_OPENVINO_DIR}/python/samples:$PATH
+
+
+
+ADD qarpo  ${INTEL_OPENVINO_DIR}/python/samples/qarpo
+
+ADD application_metrics_writer-0.1-py2.py3-none-any.whl ${INTEL_OPENVINO_DIR}/python/samples/
+ADD jupyterhub_config.py ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python
+
+ARG DEVICE="CPU"
+ENV DEVICE=$device 
+ 
+RUN pip install ${INTEL_OPENVINO_DIR}/python/samples/qarpo/qarpo-1.0.30-py3-none-any.whl
+RUN pip install ${INTEL_OPENVINO_DIR}/python/samples/qarpo/application_metrics_writer-0.1-py2.py3-none-any.whl
+RUN pip install --upgrade protobuf==3.6.1
+RUN pip install test-generator==0.1.1
+RUN conda install -c menpo opencv
+RUN source  /opt/intel/openvino_2021.2.185/bin/setupvars.sh 
+
+WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python
+# Setup jupyterhub
+
+EXPOSE 8000 
+#CMD ["jupyterhub"]
+
+
 

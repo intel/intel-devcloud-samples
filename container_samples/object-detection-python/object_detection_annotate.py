@@ -6,7 +6,7 @@ import numpy as np
 import io
 from argparse import ArgumentParser
 
-from qarpo.demoutils import progressUpdate
+#from qarpo.demoutils import progressUpdate
 
 class ResultData:
     frame_id=""
@@ -34,7 +34,7 @@ def placeBoxes(frame, rd):
 
     return frame
 
-def post_process(input_stream, input_data, out_path, progress_data, scale_frame_rate, scale_resolution):
+def post_process(input_stream, input_data, out_path,scale_frame_rate, scale_resolution):
     post_process_time_start = time.time()
     cap = cv2.VideoCapture(input_stream)
     if cap.isOpened():   
@@ -81,7 +81,7 @@ def post_process(input_stream, input_data, out_path, progress_data, scale_frame_
         frame_count += 1
         
         # report progress
-        progressUpdate(progress_data, int(time.time()-post_process_time_start), frame_count, video_len)
+        #progressUpdate(progress_data, int(time.time()-post_process_time_start), frame_count, video_len)
 
         key = cv2.waitKey(1)
         if key == 27:
@@ -104,18 +104,18 @@ def main():
 
     args = parser.parse_args()
     
-    job_id = os.environ['PBS_JOBID']
-    input_data = f"{args.output_dir}/output_{job_id}.txt"
-    progress_data = f"{args.output_dir}/post_progress_{job_id}.txt"
-    output_stream = f"{args.output_dir}/output_{job_id}.mp4"
+    #job_id = os.environ['PBS_JOBID']
+    input_data = f"{args.output_dir}/output.txt"
+   # progress_data = f"{args.output_dir}/post_progress_{job_id}.txt"
+    output_stream = f"{args.output_dir}/output.mp4"
     
     print(f"input_data={input_data}")
-    print(f"progress_data={progress_data}")
+   # print(f"progress_data={progress_data}")
     print(f"output_stream={output_stream}")
     print(f"args.scale_frame_rate={args.scale_frame_rate}")
     print(f"args.scale_resolution={args.scale_resolution}")
 
-    post_process( args.input, input_data, output_stream, progress_data, args.scale_frame_rate, args.scale_resolution )
+    post_process( args.input, input_data, output_stream,  args.scale_frame_rate, args.scale_resolution )
 
 if __name__ == '__main__':
     main()
