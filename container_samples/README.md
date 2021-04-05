@@ -1,4 +1,4 @@
-### dev cloud containerization  with qrpo, application writer libraies
+### Intel devcloud sample containerization  with qrpo, application writer libraies
 
 This example introduces the containerized object detection using a pre-trained mobilenet deep learning model  to detect vehicles with qrpo,applicationwriter library calls. This example demonstrates key concepts of OpenVINO 2021.2, to do  the inferencing on Intel® Core™ CPUs.
 
