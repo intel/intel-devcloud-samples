@@ -270,7 +270,7 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
 
 
 RUN echo "OpenVINO installation done  ......."
-RUN echo "Generating OpenVINO IR files ......."
+RUN echo "Intel devcloud Sample containerization begin ......."
 USER root
 RUN apt-get  -y update
 RUN apt-get install ffmpeg libsm6 libxext6 -y 
@@ -278,8 +278,7 @@ RUN chmod 0777 ${INTEL_OPENVINO_DIR}/python
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
 RUN chmod 777   ${INTEL_OPENVINO_DIR}/python/samples
 
-ADD Anaconda3-2019.03-Linux-x86_64.sh ${INTEL_OPENVINO_DIR}/python/samples/ 
-#ADD install_jupyterhub.sh  ${INTEL_OPENVINO_DIR}/python/samples/ 
+ADD third-party-utils/Anaconda3-2019.03-Linux-x86_64.sh ${INTEL_OPENVINO_DIR}/python/samples/ 
 RUN chmod 0755 ${INTEL_OPENVINO_DIR}/python/samples/Anaconda3-2019.03-Linux-x86_64.sh
 RUN bash ${INTEL_OPENVINO_DIR}/python/samples/Anaconda3-2019.03-Linux-x86_64.sh -b && \ 
     echo "export PATH="/root/anaconda3/bin:$PATH"" >> ~/.bashrc && \
@@ -287,7 +286,6 @@ RUN bash ${INTEL_OPENVINO_DIR}/python/samples/Anaconda3-2019.03-Linux-x86_64.sh 
 
 RUN chmod 777 /opt/intel/openvino_2021.2.185/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites_caffe.sh 
 RUN chmod 777 /opt/intel/openvino_2021.2.185/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh 
-#RUN source /opt/intel/openvino_2021.2.185/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh 
 
 RUN apt-get update && \
     apt-get autoremove -y dpkg-dev && \
@@ -304,13 +302,10 @@ RUN usermod -a -G  intel  intel
 
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
 
-#ADD object-detection-python ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python
-#ADD benchmarkApp_python ${INTEL_OPENVINO_DIR}/python/samples/benchmarkApp_python
 ADD benchmark_python ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python
 COPY benchmark_python/main.py /opt/intel/openvino_2021.2.185/python/python3.7/openvino/tools/benchmark/main.py
 COPY benchmark_python/main.py /opt/intel/openvino_2021.2.185/python/python3.6/openvino/tools/benchmark/main.py
 COPY benchmark_python/main.py /opt/intel/openvino_2021.2.185/python/python3.6/openvino/tools/benchmark/main.py
-COPY benchmark_python/run_benchmark_app.sh ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python
 COPY benchmark_python/run_benchmark.sh ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python
 COPY benchmark_python/benchmark.sh ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python
 RUN chown -R  intel:intel  ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}/python  ${INTEL_OPENVINO_DIR}/python/samples  ${INTEL_OPENVINO_DIR}/deployment_tools ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites  /var/lib/dpkg ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python
@@ -334,15 +329,11 @@ RUN pip install tensorflow==1.15.2
 RUN conda install -c conda-forge configurable-http-proxy
 RUN conda install -c conda-forge ruamel.yaml
 RUN conda search python
-#RUN conda install python=3.6.9 
 ENV PATH ${INTEL_OPENVINO_DIR}/python/samples:$PATH
 
 
-
-ADD qarpo  ${INTEL_OPENVINO_DIR}/python/samples/qarpo
-
-ADD application_metrics_writer-0.1-py2.py3-none-any.whl ${INTEL_OPENVINO_DIR}/python/samples/
-#ADD jupyterhub_config.py ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python
+ADD third-party-utils/qarpo  ${INTEL_OPENVINO_DIR}/python/samples/qarpo
+ADD third-party-utils/application_metrics_writer-0.1-py2.py3-none-any.whl ${INTEL_OPENVINO_DIR}/python/samples/
 RUN openssl rand -hex 32 > jupyterhub_cookie_secret
 
 ARG DEVICE="CPU"
@@ -354,12 +345,9 @@ RUN pip install --upgrade protobuf==3.6.1
 RUN pip install test-generator==0.1.1
 RUN conda install -c menpo opencv
 RUN source  /opt/intel/openvino_2021.2.185/bin/setupvars.sh 
-#RUN source /opt/intel/openvino_2021.2.185/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh 
 
-# setup Python
 RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing benchmark app using OpenVINO ......."
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python 
-RUN /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python/benchmark.sh"
-
-
+#RUN /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python/benchmark.sh"
+ENTRYPOINT  ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python/benchmark.sh
