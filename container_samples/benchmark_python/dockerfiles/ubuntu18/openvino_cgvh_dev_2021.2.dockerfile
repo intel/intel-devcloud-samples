@@ -350,4 +350,4 @@ RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing benchmark app using OpenVINO ......."
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python 
 #RUN /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python/benchmark.sh"
-ENTRYPOINT  ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python/benchmark.sh
+ENTRYPOINT /bin/bash -c  ${INTEL_OPENVINO_DIR}/python/samples/benchmark_python/benchmark.sh
