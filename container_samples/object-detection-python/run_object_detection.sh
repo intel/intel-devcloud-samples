@@ -1,3 +1,4 @@
+python3 -V
 python3 /opt/intel/openvino_2021.2.185/deployment_tools/tools/model_downloader/downloader.py  --name mobilenet-ssd -o raw_models 
 
 mkdir -p models/mobilenet-ssd/FP16
@@ -20,4 +21,4 @@ python3 /opt/intel/openvino_2021.2.185/deployment_tools/model_optimizer/mo.py \
 --scale 256 \
 --mean_values [127,127,127]
 
-
+bash run_sample.sh

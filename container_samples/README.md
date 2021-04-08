@@ -1,6 +1,9 @@
-### Object Detection Container with qrpo, application writer libraies
+### Intel devcloud sample containerization  with qrpo, application writer libraies
 
-This example introduces the containerized object detection using a pre-trained mobilenet deep learning model  to detect vehicles with qrpo,applicationwriter library calls. This example demonstrates key concepts of OpenVINO 2021.2, to do  the inferencing on Intel® Core™ CPUs
+This example introduces the containerized object detection using a pre-trained mobilenet deep learning model  to detect vehicles with qrpo,applicationwriter library calls. This example demonstrates key concepts of OpenVINO 2021.2, to do  the inferencing on Intel® Core™ CPUs.
+
+Following are the steps and commands to build and run the devcloud container.
+
 
 Steps to run containerized Object detection sample
 
@@ -10,14 +13,23 @@ Steps to run containerized Object detection sample
 	 
 	 alternativel you can execute ./docker.sh 
 
-2. Run the docker image by : sudo docker run  -v /tmp:/tmp  -p 8000:8000 --net=host -e DISPLAY  -e DEVICE="CPU" -it ubuntu18_dev:2021.2   /bin/bash
+
+2.Running the container without Jupyterhub:
+      sudo docker run ubuntu18_dev:2021.2
+
+
+3.Running the  container with Jupyterhub: 
+
+  1. Run the docker image by : sudo docker run  -v /tmp:/tmp  -p 8000:8000 --net=host -e DISPLAY  -e DEVICE="CPU" -it ubuntu18_dev:2021.2   /bin/bash
     alternatively you can  execute run_docker.sh 
 
-3. Execute the Object detection sample inside the docker container on command line :
+  2. Execute the Object detection sample inside the docker container on command line :
                                                                     1./run_object_detection.sh
                                                                     2./run_sample.sh 
 
-4. Execute the Object detection sample inside the docker container using jupyterhub from command line :
+  3. Execute the Object detection sample inside the docker container using jupyterhub from command line :
        a. Execute jupyterhub (Inside the sample folder)
 	   b  Open localhost at port 8000 in the browser with the url as prompted on the jupyterhub console output when running the above[a] command with user/pwd as intel/intel 
 	   c. Open the notebook objection_detection_container_ver1.ipynb and execute each cell 
+
+Note:  To run any other container besides object_detection, change the name of the container appropriately
