@@ -15,7 +15,7 @@ Steps to run containerized Object detection sample
 
 
 2.Running the container without Jupyterhub:
-      sudo docker run ubuntu18_dev:2021.2
+      sudo docker run -it ubuntu18_dev:2021.2
 
 
 3.Running the  container with Jupyterhub: 
