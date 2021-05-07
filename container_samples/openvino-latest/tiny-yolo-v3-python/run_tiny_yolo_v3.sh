@@ -2,6 +2,14 @@
 
 python3.6 -V
 
+set -e
+
+#check if config file is passed as an argument
+
+if [[ -z "$1" ]];then
+	echo "Config file is missing!"
+	exit 1
+fi
 
 #echo "$(cat $1)"
 device=$(cut -d "," -f 1  $1 |xargs)
