@@ -1,0 +1,1 @@
+sudo docker run  -v /tmp:/tmp  -p 8000:8000 --net=host -e DISPLAY  -e DEVICE="CPU" -it ubuntu18_dev:2021.3   /bin/bash
