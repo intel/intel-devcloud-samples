@@ -8,9 +8,11 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
+    apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -87,6 +89,8 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
@@ -102,28 +106,29 @@ WORKDIR /thirdparty
 ARG INSTALL_SOURCES="no"
 
 
-ARG DEPS="dpkg-dev \
-          tzdata \
-          curl"
 
+ARG DEPS="tzdata \
+          curl \
+          libgl1 \
+          libtinfo5"
 ARG LGPL_DEPS="g++ \
                gcc \
-               libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
+               libc6-dev \
+               libgtk-3-0"
 
 
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
+    apt-get install -y --no-install-recommends dpkg-dev && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
+    apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
-    ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y ${INSTALL_PACKAGES} && \
     if [ "$INSTALL_SOURCES" = "yes" ]; then \
       sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
       apt-get update && \
@@ -138,7 +143,7 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
 
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
@@ -150,15 +155,14 @@ RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
 # setup Python
 ENV PYTHON_VER python3.6
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends vim  && \
-    rm -rf /var/lib/apt/lists/*
 
 
-
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends python3-pip python3-dev python3-venv python3-setuptools lib${PYTHON_VER} && \
     rm -rf /var/lib/apt/lists/*
+
+
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
@@ -169,21 +173,13 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
     find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o \( -name "*requirements*.in" -and -not -name "*requirements-tensorflow.in" \) \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
 
-ENV VENV_TF2 /opt/intel/venv_tf2
-
-RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
-    source ${VENV_TF2}/bin/activate && \
-    pip install --no-cache-dir -U pip==19.3.1 && \
-    find "${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/" -type f \( -name "*requirements*.txt" -and -not -name "*requirements_tf.txt" \) -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
-    find "${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/" -type f -name "*requirements*.in" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
-    deactivate
-
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
 RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
+
 
 # download source for PyPi LGPL packages
 WORKDIR /thirdparty
@@ -193,15 +189,22 @@ RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
         curl -L https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz --output lake8-import-order-0.18.1.tar.gz; \
     fi
 
+
+
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
 
+
+
+
 # for CPU
 
 # for GPU
+ARG INTEL_OPENCL
 ARG TEMP_DIR=/tmp/opencl
+
 
 COPY --from=base ${TEMP_DIR} ${TEMP_DIR}
 
@@ -209,10 +212,11 @@ WORKDIR ${TEMP_DIR}
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
-    rm -rf /var/lib/apt/lists/* && \
     dpkg -i ${TEMP_DIR}/*.deb && \
     ldconfig && \
-    rm -rf ${TEMP_DIR}
+    rm -rf ${TEMP_DIR} && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # for VPU
 ARG LGPL_DEPS=udev
@@ -237,7 +241,7 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
@@ -276,9 +280,14 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
 
+
 RUN apt-get update && \
     apt-get autoremove -y dpkg-dev && \
     rm -rf /var/lib/apt/lists/*
+
+
+USER openvino
+WORKDIR ${INTEL_OPENVINO_DIR}
 
 RUN echo "OpenVINO installation done  ......."
 RUN echo "Intel devcloud Sample containerization begin ......."
@@ -300,6 +309,13 @@ RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_pre
 
 RUN apt-get update && \
     apt-get autoremove -y dpkg-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# setup Python
+ENV PYTHON_VER python3.6
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends vim  && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -348,10 +364,11 @@ RUN pip install ${INTEL_OPENVINO_DIR}/python/samples/qarpo/application_metrics_w
 RUN pip install --upgrade protobuf==3.6.1
 RUN pip install test-generator==0.1.1
 RUN conda install -c menpo opencv
-
-COPY object-detection-python/dockerfile/ubuntu18/openvino-latest/config_2021.3.txt ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/config_2021.3.txt
 RUN source  ${INTEL_OPENVINO_DIR}/bin/setupvars.sh
+
+COPY object-detection-python/dockerfile/ubuntu18/config.txt ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/config.txt
+
 RUN echo "Generating OpenVINO IR files ......."
-RUN echo "Executing object detection app using OpenVINO ......."
+RUN echo "Executing object detection lts app using OpenVINO ......."
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python
-ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/run_object_detection.sh config_2021.3.txt"
+#ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/run_object_detection.sh config.txt"
