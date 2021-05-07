@@ -1,2 +1,0 @@
-CPU,FP32,FP16,openvino_2020.3.355  
-

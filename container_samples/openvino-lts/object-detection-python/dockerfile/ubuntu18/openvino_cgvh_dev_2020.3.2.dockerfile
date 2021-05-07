@@ -366,9 +366,9 @@ RUN pip install test-generator==0.1.1
 RUN conda install -c menpo opencv
 RUN source  ${INTEL_OPENVINO_DIR}/bin/setupvars.sh
 
-COPY object-detection-python/dockerfile/ubuntu18/openvino-lts/config_2020.3.2.txt ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/config_2020.3.2.txt
+COPY object-detection-python/dockerfile/ubuntu18/config.txt ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/config.txt
 
 RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing object detection lts app using OpenVINO ......."
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python
-ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/run_object_detection.sh config_2020.3.2.txt"
+#ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/object-detection-python/run_object_detection.sh config.txt"
