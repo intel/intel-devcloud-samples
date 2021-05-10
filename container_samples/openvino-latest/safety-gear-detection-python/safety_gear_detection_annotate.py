@@ -104,10 +104,10 @@ def main():
 
     args = parser.parse_args()
     
-    job_id = "skylake" #os.environ['PBS_JOBID']
-    input_data = f"{args.output_dir}/output_{job_id}.txt"
-    progress_data = f"{args.output_dir}/post_progress_{job_id}.txt"
-    output_stream = f"{args.output_dir}/output_{job_id}.mp4"
+    #job_id = "skylake" #os.environ['PBS_JOBID']
+    input_data = f"{args.output_dir}/output.txt"
+    progress_data = f"{args.output_dir}/post_progress.txt"
+    output_stream = f"{args.output_dir}/output.mp4"
     
     print(f"input_data={input_data}")
     print(f"progress_data={progress_data}")

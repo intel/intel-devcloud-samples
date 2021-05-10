@@ -129,10 +129,10 @@ def main():
  
 
     log.info("Starting preprocessing...")
-    job_id = "skylakte" #str(os.environ['PBS_JOBID'])
-    result_file = open(os.path.join(args.output_dir, f'output_{job_id}.txt'), "w")
-    pre_infer_file = os.path.join(args.output_dir, f'pre_progress_{job_id}.txt')
-    infer_file = os.path.join(args.output_dir, f'i_progress_{job_id}.txt')
+    #job_id = "skylakte" #str(os.environ['PBS_JOBID'])
+    result_file = open(os.path.join(args.output_dir, f'output.txt'), "w")
+    pre_infer_file = os.path.join(args.output_dir, f'pre_progress.txt')
+    infer_file = os.path.join(args.output_dir, f'i_progress.txt')
     processed_vid = '/tmp/processed_vid.bin'
 
     # Read and pre-process input image
@@ -221,7 +221,7 @@ def main():
 
         # End while loop
         total_time = time.time() - infer_time_start
-        with open(os.path.join(args.output_dir, f'stats_{job_id}.txt'), 'w') as f:
+        with open(os.path.join(args.output_dir, f'performance_results.txt'), 'w') as f:
             f.write('{:.3g} \n'.format(total_time))
             f.write('{} \n'.format(frame_count))
 
