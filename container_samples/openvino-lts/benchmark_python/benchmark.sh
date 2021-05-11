@@ -39,7 +39,7 @@ then
    --output_dir $XML_IR_FP16 \
 
 
-   python3 /opt/intel/$openvino_ver/deployment_tools/tools/benchmark_tool/benchmark_app.py -m $XML_IR_FP16/resnet_v1-50.xml \
+   python3 ./benchmarkApp_python/benchmark_app.py -m $XML_IR_FP16/resnet_v1-50.xml \
             -d $DEVICE \
             -niter 10 \
             -api $API \
@@ -62,7 +62,7 @@ then
 
 
    #For IR 32
-   python3 /opt/intel/$openvino_ver/deployment_tools/tools/benchmark_tool/benchmark_app.py -m $XML_IR_FP32/resnet_v1-50.xml \
+   python3 ./benchmarkApp_python/benchmark_app.py -m $XML_IR_FP32/resnet_v1-50.xml \
             -d $DEVICE \
             -niter 10 \
             -api $API \
