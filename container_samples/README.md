@@ -29,6 +29,7 @@ Execute the command :
 ### Steps to build and run  the containerized Object detection sample with OpenVino Latest version 
 
 ###  GoTo the level container_samples/openvino-latest  in the repo
+1. Build the Ubuntu18 Openvino-latest plus the object detection sample docker image  using the dockerfile in dockerfile/Ubuntu18 folder
 Execute the command :
 sudo docker build --build-arg package_url=https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/l_openvino_toolkit_dev_ubuntu18_p_2021.3.394.tgz 
 --build-arg GMMLIB=19.3.2 
