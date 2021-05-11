@@ -2,7 +2,7 @@
 
 This example introduces the containerized object detection using a pre-trained mobilenet deep learning model  to detect vehicles 
 with qrpo,applicationwriter library calls. 
-This example demonstrates key concepts of OpenVINO Latest version: 2021.3 and OpenVINO LTS vresion: 2020.3.2 to do  the inferencing on Intel® Core™ CPUs.
+This example demonstrates key concepts of OpenVINO Latest version: 2021.3 and OpenVINO LTS version: 2020.3.2 to do inferencing on Intel® Core™ CPUs.
 
 
 ### Steps to build and run the containerized Object detection sample with  OpenVino docker file.
@@ -21,13 +21,11 @@ Execute the command :
 	--build-arg device="CPU"
 	-t object_detection_2020lts:latest 
 	-f ./object-detection-python/dockerfile/ubuntu18/openvino_cgvh_dev_2020.3.2.dockerfile .
-	 
-	 
-2.Running the container without Jupyterhub:
+
+2. Running the container without Jupyterhub:
       sudo docker run -it object_detection_2020lts:latest
 	  
 ### Steps to build and run  the containerized Object detection sample with OpenVino Latest version 
-
 ###  GoTo the level container_samples/openvino-latest  in the repo
 1. Build the Ubuntu18 Openvino-latest plus the object detection sample docker image  using the dockerfile in dockerfile/Ubuntu18 folder
 Execute the command :
@@ -42,6 +40,6 @@ sudo docker build --build-arg package_url=https://storage.openvinotoolkit.org/re
  -f ./object-detection-python/dockerfile/ubuntu18/openvino_cgvh_dev_2021.3.dockerfile .
 
 2. Running the container :
-    sudo docker run -it object_det_2021.3:latest
+      sudo docker run -it object_det_2021.3:latest
 
 ### Note:  To run any other container besides object_detection, change the name of the container appropriately for lts and latest versions of OpenVINO 
