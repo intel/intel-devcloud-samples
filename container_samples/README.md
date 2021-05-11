@@ -5,8 +5,8 @@ This example introduces the containerized object detection using a pre-trained m
 Following are the steps and commands to build and run the devcloud container.
 
 
-Steps to run the containerized Object detection OpenVino LTS sample
-Checkout the repo: https://gitlab.devtools.intel.com/iot-devcloud/reference-samples/-/tree/master/container_samples
+##Steps to run the containerized Object detection OpenVino LTS sample
+##Checkout the repo: https://gitlab.devtools.intel.com/iot-devcloud/reference-samples/-/tree/master/container_samples
 
 1. Build the Ubuntu Openvino plus the object detection lts  sample docker image  using the dockerfile in dockerfile/Ubuntu18 folder of the sample:
 
@@ -25,7 +25,7 @@ GoTo the level container_samples/openvino-lts in the repo, execute the command :
 2.Running the container without Jupyterhub:
       sudo docker run -it object_detection_2020lts:latest
 	  
-Steps to run the containerized Object detection OpenVino Latest version sample
+##Steps to run the containerized Object detection OpenVino Latest version sample
 
 1. GoTo the level container_samples/openvino-latest  in the repo, execute the command :
 
@@ -42,4 +42,4 @@ sudo docker build --build-arg package_url=https://storage.openvinotoolkit.org/re
 2. Running the container :
     sudo docker run -it object_det_2021.3:latest
 
-Note:  To run any other container besides object_detection, change the name of the container appropriately for lts and latest versions of OpenVINO 
+###Note:  To run any other container besides object_detection, change the name of the container appropriately for lts and latest versions of OpenVINO 
