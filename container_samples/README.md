@@ -9,8 +9,9 @@ This example demonstrates key concepts of OpenVINO Latest version: 2021.3 and Op
 ### Steps to build and run the containerized Object detection sample with  OpenVino docker file.
 ### Checkout the repo: https://gitlab.devtools.intel.com/iot-devcloud/reference-samples
 
-1. Build the Ubuntu18 Openvino-lts plus the object detection sample docker image  using the dockerfile in dockerfile/Ubuntu18 folder
-Each sample has its own dockerfile and  a config file which allows users to configure and build the dockerfile with custome requirements of 
+1. Build the Ubuntu18 Openvino-lts plus the object detection sample docker image  using the dockerfile in dockerfile/Ubuntu18 folder.
+
+#### Each sample has its own dockerfile and  a config file which allows users to configure and build the dockerfile with custom requirements of 
 device (CPU,GPU,VPU etc), Precision(FP32, FP16) and Openvino Package Version(2021.3.394 etc) 
 
 ### GoTo the level container_samples/openvino-lts in the repo
