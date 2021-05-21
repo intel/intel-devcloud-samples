@@ -1,3 +1,0 @@
-/data/reference-sample-data/store-traffic-monitor-python/people-detection.mp4 person
-/data/reference-sample-data/store-traffic-monitor-python/one-by-one-person-detection.mp4 person
-/data/reference-sample-data/store-traffic-monitor-python/bottle-detection.mp4 bottle
