@@ -1,4 +1,4 @@
-FROM devcloud_data_dev:2021.4_latest
+FROM quay.io/devcloud/devcloud-openvino-data-dev:2021.4_latest
 
 RUN echo "OpenVINO installation done  ......."
 RUN echo "Intel devcloud Sample containerization begin ......."
