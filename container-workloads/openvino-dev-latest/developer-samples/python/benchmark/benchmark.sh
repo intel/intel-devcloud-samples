@@ -5,11 +5,8 @@ echo "OUTPUT FOLDER:  $OUTPUT_FOLDER"
 echo "MODEL:  $MODEL"
 echo "Running on" $RUN_ON_PREM
 
-#RUN_ON_PREM="data"
-
 FP16='FP16'
 FP32='FP32'
-#INPUT_FILE="/opt/intel/openvino_$OPENVINO_VERSION/python/samples/object-detection-python/cars_1900.mp4"
 DEVICE=$DEVICE
 NUM_REQS=2
 API="async"
@@ -21,14 +18,9 @@ XML_IR_FP32="$RUN_ON_PREM/$OUTPUT_FOLDER/IR/FP32"
 IR_FP16="$XML_IR_FP16/mobilenet-ssd.xml"
 IR_FP32="$XML_IR_FP32/mobilenet-ssd.xml"
 
-
 sample_name="benchmark"
-
 source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh 
-python3 -V
-
 python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/model_downloader/downloader.py --name resnet-50-tf -o models
-
 
 if [[ "$PRECISION" == *"$FP16"* ]];
 then
