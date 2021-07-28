@@ -79,6 +79,6 @@ RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing run tiny-yolo-v3-python app using OpenVINO ......."
 
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3
-ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3/run_tiny_yolo_v3.sh"
+#ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3/run_tiny_yolo_v3.sh"
 
 
