@@ -153,6 +153,7 @@ def main():
     assert len(net.inputs.keys()) == 1, "Sample supports only single input topologies"
     assert len(net.outputs) == 1, "Sample supports only single output topologies"
 
+    input_blob = next(iter(net.inputs))
     out_blob = next(iter(net.outputs))
 
     if args.input == 'cam':
