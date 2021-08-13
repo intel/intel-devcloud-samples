@@ -3,10 +3,8 @@ FROM quay.io/devcloud/devcloud-openvino-data-dev:2021.4_latest
 RUN echo "OpenVINO installation done  ......."
 RUN echo ${INTEL_OPENVINO_DIR}
 
-
 USER root
 RUN echo "Intel devcloud benchmak sample containerization begin ......."
-
 
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh
 
