@@ -3,6 +3,7 @@ echo "Device:  $DEVICE"
 echo "Precision:  $PRECISION"
 echo "OUTPUT FOLDER:  $OUTPUT_FOLDER"
 echo "MODEL:  $MODEL"
+echo "DOWNLOADED MODEL PATH:  $DOWNLOADED_MODEL_PATH"
 echo "Running on" $RUN_ON_PREM
 
 FP16='FP16'
@@ -19,8 +20,12 @@ IR_FP16="$XML_IR_FP16/mobilenet-ssd.xml"
 IR_FP32="$XML_IR_FP32/mobilenet-ssd.xml"
 
 sample_name="benchmark"
+
+MODEL="resnet-50-tf"
 source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh 
-python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/model_downloader/downloader.py --name resnet-50-tf -o models
+mkdir -p $RUN_ON_PREM/models
+python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/model_downloader/downloader.py --name $MODEL  -o $RUN_ON_PREM/models
+
 
 if [[ "$PRECISION" == *"$FP16"* ]];
 then
@@ -29,7 +34,7 @@ then
    mkdir -p $XML_IR_FP16
    python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
    --data_type $FP16 \
-   --input_model models/public/resnet-50-tf/resnet_v1-50.pb \
+   --input_model $RUN_ON_PREM/models/public/resnet-50-tf/resnet_v1-50.pb  \
    --input_shape=[1,224,224,3] \
    --mean_values=[123.68,116.78,103.94] \
    --output_dir $XML_IR_FP16 \
@@ -50,7 +55,7 @@ then
    mkdir -p $Output_folder_32
    mkdir -p $XML_IR_FP32
    python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
-   --input_model models/public/resnet-50-tf/resnet_v1-50.pb \
+   --input_model $RUN_ON_PREM/models/public/resnet-50-tf/resnet_v1-50.pb \
    --input_shape=[1,224,224,3] \
    --mean_values=[123.68,116.78,103.94] \
    --data_type $FP32 \

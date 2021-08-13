@@ -3,9 +3,15 @@ FROM quay.io/devcloud/devcloud-openvino-data-dev:2021.4_latest
 RUN echo "OpenVINO installation done  ......."
 RUN echo ${INTEL_OPENVINO_DIR}
 
-RUN echo "Intel devcloud benchmak sample containerization begin ......."
 
 USER root
+RUN apt-get update \
+    && apt-get install -y \
+        vim
+
+RUN echo "Intel devcloud benchmak sample containerization begin ......."
+
+#USER root
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh
 
 ENV USERNAME=intel

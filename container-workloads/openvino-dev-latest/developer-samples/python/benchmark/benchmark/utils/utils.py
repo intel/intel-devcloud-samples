@@ -77,7 +77,7 @@ def get_number_iterations(number_iterations: int, nireq: int, api_type: str):
     if api_type == 'async' and niter:
         niter = int((niter + nireq - 1) / nireq) * nireq
         if number_iterations != niter:
-            logger.warn('Number of iterations was aligned by request number '
+            logger.warning('Number of iterations was aligned by request number '
                         'from {} to {} using number of requests {}'.format(number_iterations, niter, nireq))
 
     return niter
