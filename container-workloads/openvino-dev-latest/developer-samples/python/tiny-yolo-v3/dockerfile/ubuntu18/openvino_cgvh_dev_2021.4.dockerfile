@@ -11,24 +11,18 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y git
 
-
 # install vlc player to play mp4 videos
 RUN apt-get update \
 && apt-get install -y vlc
 
 RUN pip install tensorflow==1.15.5
 
-RUN python3 -c 'import tensorflow as tf; print(tf.__version__)'
 ENV USERNAME=intel
 ENV PASSWORD=intel
-
 RUN usermod -a -G  intel  intel
-
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
-
 ADD  developer-samples/python/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3
 RUN chown -R  intel:intel  ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}/python  ${INTEL_OPENVINO_DIR}/python/samples  ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/deployment_tools ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites  /var/lib/dpkg
-
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/mo.py
 RUN chmod -R 777 ${INTEL_OPENVINO_DIR}/python/samples/
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3/*.sh
