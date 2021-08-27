@@ -225,8 +225,10 @@ def main():
         # End while loop
         total_time = time.time() - infer_time_start
         with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
-                f.write('{:.3g} \n'.format(total_time))
-                f.write('{} \n'.format(frame_count))
+                #f.write('{:.3g} \n'.format(total_time))
+                f.write('Throughput: {:.3g} FPS \n'.format(total_time))
+                #f.write('{} \n'.format(frame_count))
+                f.write('Latency: {} ms\n'.format(frame_count))
 
         result_file.close()
     

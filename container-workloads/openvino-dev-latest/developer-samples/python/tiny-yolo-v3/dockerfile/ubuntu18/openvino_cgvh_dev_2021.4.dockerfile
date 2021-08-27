@@ -1,4 +1,4 @@
-FROM devcloud_data_dev:2021.4_latest
+FROM quay.io/devcloud/devcloud-openvino-data-dev:2021.4_latest
 
 RUN echo "OpenVINO installation done  ......."
 RUN echo "Intel devcloud Sample containerization begin ......."
@@ -11,24 +11,15 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y git
 
-# Install vim 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y vim
-
-# Install sudo 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y sudo
-
 
 # install vlc player to play mp4 videos
 RUN apt-get update \
 && apt-get install -y vlc
 
+
+
 RUN pip install tensorflow==1.15.5
 
-RUN python3 -c 'import tensorflow as tf; print(tf.__version__)'
 ENV USERNAME=intel
 ENV PASSWORD=intel
 
@@ -45,9 +36,6 @@ RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3/*.sh
 
 USER intel
 
-#RUN pip install tensorflow==1.15.5
-
-#RUN python3 -c 'import tensorflow as tf; print(tf.__version__)'
 ENV PATH ${INTEL_OPENVINO_DIR}/python/samples:$PATH
 
 ARG DEVICE="CPU"

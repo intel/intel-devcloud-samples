@@ -9,7 +9,6 @@ echo "Device:  $DEVICE"
 echo "Precision:  $PRECISION"
 echo "INPUT_FILE:  $INPUT_FILE"
 echo "OUTPUT FOLDER:  $OUTPUT_FOLDER"
-echo "MODEL:  $MODEL"
 echo "Running on" $RUN_ON_PREM
 
 
@@ -34,10 +33,6 @@ NUMSTREAMS=1
 LABEL_FILE="coco.names"
 source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh
 
-# Copy some prerequisits
-#ls -la  /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/inference_engine/demos
-#cp -rf /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/inference_engine/demos/common/ .
-#cp common/python/monitors.py .
 
 #Download Tiny YOLO V3 Darknet Model Weights and COCO labels file
 curl https://pjreddie.com/media/files/yolov3-tiny.weights > yolov3-tiny.weights
@@ -51,15 +46,9 @@ python3.6 tensorflow-yolo-v3/convert_weights_pb.py --class_names coco.names --da
 
 if [[ "$PRECISION" == *"$FP16"* ]];
 then
-	# Set inference model IR files using specified precision
-	#MODELPATH_FP16="models/tinyyolov3/FP16/frozen_darknet_yolov3_model.xml"
-	#mkdir -p models/tinyyolov3/FP16/
         echo "Creating output folder \$FP16"
         mkdir -p $Output_folder_16
         mkdir -p $XML_IR_FP16
-        echo "****** Print Output folder *****"
-        echo $Output_folder_16
-        echo $XML_IR_FP16
 	#Create the IR files for the inference model - FP16
 	python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
 	--input_model frozen_darknet_yolov3_model.pb \
@@ -84,18 +73,10 @@ fi
 
 if [[ "$PRECISION" == *"$F32"* ]];
 then
-	# Set inference model IR files using specified precision
-	#OUTPUT_FILE_FP32="data/output_tiny_yolo_v3/FP32/"
-	#MODELPATH_FP32="models/tinyyolov3/FP32/frozen_darknet_yolov3_model.xml"
-
-	#mkdir -p models/tinyyolov3/FP32/
 
         echo "Creating output folder \$FP32"
         mkdir -p $Output_folder_32
         mkdir -p $XML_IR_FP32
-        echo "****** Print Output folder *****"
-        echo $Output_folder_32
-        echo $XML_IR_FP32
 	#Create the IR files for the inference model - FP32
 	python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
 	--input_model frozen_darknet_yolov3_model.pb \
