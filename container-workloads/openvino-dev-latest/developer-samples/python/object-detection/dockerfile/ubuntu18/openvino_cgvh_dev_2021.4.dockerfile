@@ -45,4 +45,4 @@ RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing object detection app using OpenVINO ......."
 
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/object-detection
-ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/object-detection/run_object_detection.sh"
+#ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/object-detection/run_object_detection.sh"

@@ -361,7 +361,7 @@ def run(args):
             print('Latency:    {:.2f} ms'.format(latency_ms))
         print('Throughput: {:.2f} FPS'.format(fps))
          #----devcloud stats.txt for SummaryGraph --- start
-        args.output_dir='/opt/intel/openvino_2021.4.582/python/samples/benchmark'
+        #args.output_dir='/opt/intel/openvino_2021.4.582/python/samples/benchmark'
         if args.output_dir:
             with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
                 f.write('Latency: {:.2f} ms \n'.format(latency_ms))

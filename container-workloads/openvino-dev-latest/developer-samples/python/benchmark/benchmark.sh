@@ -45,10 +45,9 @@ then
             -niter 10 \
             -api $API \
             --report_type detailed_counters \
-            --report_folder $Output_folder_16
+            --output_dir $Output_folder_16
 
-   cp /opt/intel/openvino_2021.4.582/python/samples/benchmark/performance.txt $Output_folder_16 
-   rm -rf   /opt/intel/openvino_2021.4.582/python/samples/benchmark/performance.txt
+   cp  /opt/intel/openvino_$OPENVINO_VERSION/python/samples/benchmark/*.csv  $Output_folder_16 
 fi
 
 if [[ "$PRECISION" == *"$F32"* ]];
@@ -70,8 +69,8 @@ then
             -niter 10 \
             -api $API \
             --report_type detailed_counters \
-            --report_folder $Output_folder_32
+            --output_dir $Output_folder_32
 
+   cp  /opt/intel/openvino_$OPENVINO_VERSION/python/samples/benchmark/*.csv  $Output_folder_32
 
-   cp /opt/intel/openvino_2021.4.582/python/samples/benchmark/performance.txt $Output_folder_32 
 fi
