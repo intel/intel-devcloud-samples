@@ -10,10 +10,10 @@ FP32='FP32'
 sample_name="pneumonia-classification"
 DEVICE=$DEVICE
 NUM_REQS=2
-Output_folder_32="data/output_$sample_name/results/FP32"
-Output_folder_16="data/output_$sample_name/results/FP16"
-XML_IR_FP16="data/output_$sample_name/IR/FP16"
-XML_IR_FP32="data/output_$sample_name/IR/FP32"
+Output_folder_32="$RUN_ON_PREM/output_$sample_name/results/FP32"
+Output_folder_16="$RUN_ON_PREM/output_$sample_name/results/FP16"
+XML_IR_FP16="$RUN_ON_PREM/output_$sample_name/IR/FP16"
+XML_IR_FP32="$RUN_ON_PREM/output_$sample_name/IR/FP32"
 INPUT_FILE="./validation_images/NORMAL/*.jpeg"
 API="async"
 
