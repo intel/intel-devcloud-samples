@@ -1,3 +1,2 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ac25af1287d1f29ffeabb760667d5a846c2589d53b04f1cca9d7196b581a0ec6
-size 164
+sudo docker build   -t safety_gear_detection_2021.4 -f ./developer-samples/python/safety-gear-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile  .
+
