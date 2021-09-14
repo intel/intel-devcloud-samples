@@ -569,8 +569,10 @@ def main():
         applicationMetricWriter.send_inference_time(duration)
         #performance chart metrics
         with open(os.path.join(output_path, f'performance.txt'), 'w') as f:
-                f.write('Throughput: {:.3g} FPS\n'.format(end_time - mode_info[mode_value].last_start_time))
-                f.write('Latency  : {} ms\n'.format(mode_info[mode_value].frames_count))
+                f.write('Latency: {:.3g} ms\n'.format((mode_info[mode_value].latency_sum / \
+                                             mode_info[mode_value].frames_count) * 1e3))
+                f.write('Throughput  : {} FPS\n'.format(mode_info[mode_value].frames_count / \
+                                      (end_time - mode_info[mode_value].last_start_time)))
 
     for exec_net in exec_nets.values():
         await_requests_completion(exec_net.requests)
