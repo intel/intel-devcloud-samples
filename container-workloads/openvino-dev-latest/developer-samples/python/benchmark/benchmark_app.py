@@ -177,13 +177,11 @@ def main(args):
         if statistics:
           statistics.dump()
 
-        print("********* am here 1******************")
         print('****COUNT:      {} iterations'.format(iteration))
         print('Duration:   {:.2f} ms'.format(get_duration_in_milliseconds(total_duration_sec)))
         if MULTI_DEVICE_NAME not in device_name:
             print('Latency:    {:.2f} ms'.format(latency_ms))
-        print('Throughput: {:.2f} FPS'.format(fps))
-        print("********* am here 2******************")
+            print('Throughput: {:.2f} FPS'.format(fps))
         print(args.output_dir)
 
         with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
@@ -191,14 +189,11 @@ def main(args):
             f.write('Throughput: {:.2f} FPS \n'.format(fps))
 
         
-        #job_id = str(os.environ['PBS_JOBID']) #devcloud
         
-        #----devcloud stats.txt for SummaryGraph --- start
         if args.output_dir:
             with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
                 f.write('Latency {:.2f} ms\n'.format(round(total_duration_sec)))
                 f.write('Throughput: {:.2f} FPS \n'.format(fps))
-        #----devcloud stats.txt for SummaryGraph --- end
         
         del exe_network
 
