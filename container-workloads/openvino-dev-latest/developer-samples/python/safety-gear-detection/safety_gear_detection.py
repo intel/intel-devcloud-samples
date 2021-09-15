@@ -27,7 +27,6 @@ import io
 from openvino.inference_engine import IECore
 from pathlib import Path
 from qarpo.demoutils import progressUpdate
-import applicationMetricWriter
 
 def build_argparser():
     parser = ArgumentParser()
@@ -228,8 +227,7 @@ def main():
                     in_frame = np.reshape(deserialized_bytes, newshape=(n, c, h, w))
                     inf_time = time.time()
                     exec_net.start_async(request_id=current_inference, inputs={input_blob: in_frame})
-                    det_time = time.time() - inf_time
-                    applicationMetricWriter.send_inference_time(det_time*1000)         
+                    det_time = time.time() - inf_time       
                 
                 # Retrieve the output of an earlier inference request
                 if previous_inference >= 0:
@@ -237,8 +235,7 @@ def main():
                     if status is not 0:
                         raise Exception("Infer request not completed successfully")
                     # Parse inference results
-                    det_time = time.time() - inf_time
-                    applicationMetricWriter.send_inference_time(det_time*1000)                      
+                    det_time = time.time() - inf_time                 
                     res = infer_requests[previous_inference].outputs[out_blob]
                     processBoxes(frame_count, res, labels_map, args.prob_threshold, width, height, result_file)
                     frame_count += 1
@@ -259,18 +256,15 @@ def main():
         # End while loop
         total_time = time.time() - infer_time_start
         with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
-            f.write('{:.3g} \n'.format(total_time))
-            f.write('{} \n'.format(frame_count))
+            f.write('Throughput: {:.3g} FPS \n'.format(frame_count)/format(total_time))
+            f.write('Latency: {} ms\n'.format(total_time)*1000)
 
         result_file.close()
     
     
     finally:
         log.info("Processing done...")
-        applicationMetricWriter.send_application_metrics(model_xml, args.device)
         del exec_net
-        
-    applicationMetricWriter.send_application_metrics(model_xml, args.device)
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
