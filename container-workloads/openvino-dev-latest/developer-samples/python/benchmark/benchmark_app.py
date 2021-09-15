@@ -187,7 +187,9 @@ def main(args):
         
         if args.output_dir:
             with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
-                f.write('Latency {:.2f} ms\n'.format(latency_ms))
+                #f.write('Latency {:.2f} ms\n'.format(latency_ms))
+                # total execution time which is the inference processing time 
+                f.write('Latency {:.2f} ms\n'.format(get_duration_in_milliseconds(total_duration_sec)))
                 f.write('Throughput: {:.2f} FPS \n'.format(fps))
         
         del exe_network
