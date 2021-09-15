@@ -2,7 +2,7 @@
 echo "Openvino Package Version: openvino_$OPENVINO_VERSION"
 echo "Device:  $DEVICE"
 echo "Precision:  $PRECISION"
-echo "OUTPUT FOLDER:  $OUTPUT_FOLDER"
+echo "****OUTPUT FOLDER:  $OUTPUT_FOLDER"
 
 FP16='FP16'
 FP32='FP32'

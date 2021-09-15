@@ -16,8 +16,6 @@ import ngraph as ng
 
 from utils import load_img, img_to_array, resize_image
 from pathlib import Path
-#from qarpo.demoutils import simpleProgressUpdate
-#import applicationMetricWriter
 
 
 def float16_conversion(n):
@@ -135,7 +133,6 @@ def main():
         os.makedirs(args.output_dir, exist_ok=True)
     f=open(os.path.join(args.output_dir, f'result.txt'), 'w')
     f1=open(os.path.join(args.output_dir, f'performance.txt'), 'w') 
-    #progress_file_path = os.path.join(args.output_dir, f'i_progress_{job_id}.txt')
     time_images=[]
     tstart=time.time()
     for index_f, file in enumerate(files):
@@ -145,7 +142,6 @@ def main():
             inf_time = time.time()
             res = exec_net.infer(inputs={input_blob: image1})
             det_time = time.time() - inf_time
-            #applicationMetricWriter.send_inference_time(det_time*1000)   
         infer_time = (time.time() - t0)*1000
         log.info("Average running time of one iteration: {} ms".format(np.average(np.asarray(infer_time))))
         if args.perf_counts:
@@ -191,11 +187,10 @@ def main():
                     #f.write(res + "\n Inference performed in " + str(np.average(np.asarray(infer_time))) + "ms") 
         f.write("Pneumonia probability: "+ str(probs) + ", Inference performed in " + str(avg_time) + "ms, Input file: "+file+" \n") 
         time_images.append(avg_time)
-        #simpleProgressUpdate(progress_file_path,index_f* avg_time , (len(files)-1)* avg_time) 
     total_time = np.sum(np.asarray(time_images))/1000
-    f1.write("Latency:" + str(total_time)+" ms" +'\n')
-    f1.write("Throughput:" + str(len(time_images))+ " FPS" + '\n')
-    #applicationMetricWriter.send_application_metrics(model_xml, device)
+    #f1.write("Latency:" + str(infer_time)+" ms" +'\n')
+    f1.write("Latency:" + str(total_time*1000)+" ms" +'\n')
+    f1.write("Throughput:" + str(len(time_images)/total_time) + " FPS" + '\n')
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
