@@ -3,6 +3,7 @@ echo "Openvino Package Version: openvino_$OPENVINO_VERSION"
 echo "Device:  $DEVICE"
 echo "Precision:  $PRECISION"
 echo "****OUTPUT FOLDER:  $OUTPUT_FOLDER"
+echo "Running on" $RUN_ON_PREM
 
 FP16='FP16'
 FP32='FP32'
@@ -23,7 +24,9 @@ source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh
 if [[ "$PRECISION" == *"$FP16"* ]];
 then
    echo "Creating output folder \$FP16"
+   echo  $Output_folder_16
    mkdir -p $Output_folder_16
+   echo $XML_IR_FP16
    mkdir -p $XML_IR_FP16
 
    # Create FP16 IR files

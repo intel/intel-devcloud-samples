@@ -17,7 +17,6 @@ import ngraph as ng
 from utils import load_img, img_to_array, resize_image
 from pathlib import Path
 
-
 def float16_conversion(n):
      w1=struct.pack('H', int(np.binary_repr(int(n),width=16), 2))
      w=np.frombuffer(w1,dtype=np.float16)[0]
@@ -80,7 +79,6 @@ def build_argparser():
 def main():
     
     colormap='viridis'
-    #job_id = os.environ['PBS_JOBID']
     log.basicConfig(format="[ %(levelname)s ] %(message)s", level=log.INFO, stream=sys.stdout)
     args = build_argparser().parse_args()
     model_xml = args.model
@@ -106,9 +104,7 @@ def main():
     # add the last convolutional layer as output 
     net.add_outputs(bn)
     #Access the weights of the Fully Connected layer predictions_1/MatMul, this is a partial name that we match when iterating over the network (this is more robust to API change)
-    #fc="predictions_1/MatMul/1_port_transpose"
     fc="predictions_1/kernel"
-
     # name of the inputs and outputs
     for blob_name in net.input_info:
         if len(net.input_info[blob_name].input_data.shape) == 4:
@@ -133,6 +129,7 @@ def main():
         os.makedirs(args.output_dir, exist_ok=True)
     f=open(os.path.join(args.output_dir, f'result.txt'), 'w')
     f1=open(os.path.join(args.output_dir, f'performance.txt'), 'w') 
+    progress_file_path = os.path.join(args.output_dir, f'i_progress.txt')
     time_images=[]
     tstart=time.time()
     for index_f, file in enumerate(files):
@@ -188,7 +185,8 @@ def main():
         f.write("Pneumonia probability: "+ str(probs) + ", Inference performed in " + str(avg_time) + "ms, Input file: "+file+" \n") 
         time_images.append(avg_time)
     total_time = np.sum(np.asarray(time_images))/1000
-    #f1.write("Latency:" + str(infer_time)+" ms" +'\n')
+    #f1.write(str(total_time)+'\n')
+    #f1.write(str(len(time_images))+'\n')
     f1.write("Latency:" + str(total_time*1000)+" ms" +'\n')
     f1.write("Throughput:" + str(len(time_images)/total_time) + " FPS" + '\n')
 
