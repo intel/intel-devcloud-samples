@@ -185,10 +185,8 @@ def main():
         f.write("Pneumonia probability: "+ str(probs) + ", Inference performed in " + str(avg_time) + "ms, Input file: "+file+" \n") 
         time_images.append(avg_time)
     total_time = np.sum(np.asarray(time_images))/1000
-    #f1.write(str(total_time)+'\n')
-    #f1.write(str(len(time_images))+'\n')
     f1.write("Latency:" + str(total_time*1000)+" ms" +'\n')
-    f1.write("Throughput:" + str(len(time_images)/total_time) + " FPS" + '\n')
+    f1.write("Throughput: {:.2f} fps \n".format(len(time_images)/total_time))
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
