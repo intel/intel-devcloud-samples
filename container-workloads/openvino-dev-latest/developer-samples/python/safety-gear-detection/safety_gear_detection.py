@@ -256,8 +256,8 @@ def main():
         # End while loop
         total_time = time.time() - infer_time_start
         with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
-            f.write('Throughput: {:.3g} FPS \n'.format(frame_count)/format(total_time))
-            f.write('Latency: {} ms\n'.format(total_time)*1000)
+            f.write('Throughput: {:.3g} FPS \n'.format(frame_count/total_time))
+            f.write('Latency: {:.3f} ms\n'.format(total_time*1000))
 
         result_file.close()
     
