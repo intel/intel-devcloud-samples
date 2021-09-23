@@ -34,7 +34,6 @@ from inference import Network
 from pathlib import Path
 sys.path.insert(0, str(Path().resolve().parent.parent))
 from qarpo.demoutils import *
-import applicationMetricWriter
 
 def build_argparser():
     """
@@ -191,7 +190,6 @@ def main():
             if infer_network.wait(pre_request_id) == 0:
                 # Results of the output layer of the network
                 det_time = (time.time() - inf_start) + (load_time / num_infer_req)
-                applicationMetricWriter.send_inference_time(det_time*1000)
                 result = infer_network.get_output(pre_request_id)
                 result_list.append([result, det_time*1000])
 
@@ -216,8 +214,8 @@ def main():
     if args.output_dir:
         total_time = time.time() - infer_time_start
         with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
-            f.write('{} \n'.format(round(total_time, 1)))
-            f.write('{} \n'.format(frame_count))
+            f.write('Throughput: {:.3g} FPS \n'.format(frame_count/total_time))
+            f.write('Latency: {:.3f} ms\n'.format(total_time*1000))
 
     cap.release()
     infer_network.clean()
@@ -250,7 +248,6 @@ def main():
         if frame_count%10 == 0:
             progressUpdate(post_progress_file_path, time.time()-post_processing_time_start, frame_count, video_len)
 
-    applicationMetricWriter.send_application_metrics(args.model, args.device)
 
 if __name__ == '__main__':
     main()
