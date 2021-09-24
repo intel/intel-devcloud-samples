@@ -19,6 +19,14 @@ RUN pip install tensorflow==1.15.5
 
 ENV USERNAME=intel
 ENV PASSWORD=intel
+
+RUN usermod -a -G  intel  intel
+
+RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
+
+ADD  developer-samples/python/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3
+RUN chown -R  intel:intel  ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}/python  ${INTEL_OPENVINO_DIR}/python/samples  ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/deployment_tools ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites  /var/lib/dpkg
+
 RUN usermod -a -G  intel  intel
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
 ADD  developer-samples/python/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3
