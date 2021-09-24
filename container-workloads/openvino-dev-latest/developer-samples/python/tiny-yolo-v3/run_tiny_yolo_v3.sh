@@ -1,16 +1,9 @@
-# alias python3=python3.6
-
-#python3.6 -V
-
-#set -e
-
 echo "Openvino Package Version: openvino_$OPENVINO_VERSION"
 echo "Device:  $DEVICE"
 echo "Precision:  $PRECISION"
 echo "INPUT_FILE:  $INPUT_FILE"
 echo "OUTPUT FOLDER:  $OUTPUT_FOLDER"
 echo "Running on" $RUN_ON_PREM
-
 
 FP16='FP16'
 FP32='FP32'
@@ -23,10 +16,6 @@ Output_folder_16="$RUN_ON_PREM/$OUTPUT_FOLDER/results/FP16"
 XML_IR_FP16="$RUN_ON_PREM/$OUTPUT_FOLDER/IR/FP16"
 XML_IR_FP32="$RUN_ON_PREM/$OUTPUT_FOLDER/IR/FP32"
 
-#Store input arguments: <output_directory> <device> <input_file> <num_reqs>
-
-
-#INPUT_FILE="classroom.mp4"
 NUMREQUEST=2
 THRESHOLD=0.4
 NUMSTREAMS=1
@@ -77,7 +66,6 @@ then
         echo "Creating output folder \$FP32"
         mkdir -p $Output_folder_32
         mkdir -p $XML_IR_FP32
-	#Create the IR files for the inference model - FP32
 	python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
 	--input_model frozen_darknet_yolov3_model.pb \
 	--transformations_config /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/extensions/front/tf/yolo_v3_tiny.json \

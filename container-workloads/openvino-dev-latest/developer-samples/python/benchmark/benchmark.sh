@@ -48,6 +48,7 @@ then
             --output_dir $Output_folder_16
 
    cp  /opt/intel/openvino_$OPENVINO_VERSION/python/samples/benchmark/*.csv  $Output_folder_16 
+
 fi
 
 if [[ "$PRECISION" == *"$F32"* ]];

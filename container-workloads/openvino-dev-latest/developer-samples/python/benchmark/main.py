@@ -301,11 +301,6 @@ def run(args):
         output_string = process_help_inference_string(benchmark)
 
         next_step(additional_info=output_string)
-        #progress_bar_total_count = 10000
-        #if benchmark.niter and not benchmark.duration_seconds:
-        #    progress_bar_total_count = benchmark.niter
-
-        #progress_bar = ProgressBar(progress_bar_total_count, args.stream_output, args.progress) if args.progress else None
 
         duration_ms =  "{:.2f}".format(benchmark.first_infer(exe_network))
         logger.info("First inference took {} ms".format(duration_ms))
@@ -360,8 +355,6 @@ def run(args):
         if MULTI_DEVICE_NAME not in device_name:
             print('Latency:    {:.2f} ms'.format(latency_ms))
         print('Throughput: {:.2f} FPS'.format(fps))
-         #----devcloud stats.txt for SummaryGraph --- start
-        #args.output_dir='/opt/intel/openvino_2021.4.582/python/samples/benchmark'
         if args.output_dir:
             with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
                 f.write('Latency: {:.2f} ms \n'.format(latency_ms))
