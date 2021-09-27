@@ -2,7 +2,7 @@ FROM quay.io/devcloud/devcloud-openvino-data-dev:2021.4_latest
 
 USER root
 
-ADD developer-samples/python/OVTF-samples/ /OVTF
+ADD developer-samples/python/Openvino_Tensorflow-samples/ /OVTF
 RUN chmod 0777 /OVTF
 RUN chgrp -R 0 /OVTF && \
     chmod -R g=u /OVTF
@@ -13,6 +13,8 @@ RUN chmod 777 /OVTF/classification_ovtf/*.sh
 
 RUN echo "Intel devcloud Sample containerization begin ......."
 
+ARG FLAG="openvino"
+ENV FLAG=$FLAG
 
 ARG DEVICE="CPU"
 ENV DEVICE=$DEVICE
@@ -52,10 +54,13 @@ RUN echo "Executing classification sample using Intel Openvino Integration with 
 
 WORKDIR /OVTF/classification_ovtf
 RUN mkdir data 
-RUN curl -L "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz" | tar -C data -xz
 
-RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v0.6.0/tensorflow_abi1-2.5.0-cp36-cp36m-manylinux2010_x86_64.whl
-RUN pip3 install openvino_tensorflow-0.5.0-cp36-cp36m-manylinux2014_x86_64.whl
+RUN curl -L "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz" | tar -C data -xz
+RUN chmod 777 /OVTF/classification_ovtf/data/*
+RUN chmod -R 777 /OVTF/classification_ovtf
+RUN chmod -R 777 /OVTF
+RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.0/tensorflow_abi1-2.5.1-cp36-cp36m-manylinux2010_x86_64.whl
+RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.0/openvino_tensorflow_abi1-1.0.0-cp36-cp36m-manylinux2014_x86_64.whl
 
 ENTRYPOINT /bin/bash -c "source run_classification.sh"
 
