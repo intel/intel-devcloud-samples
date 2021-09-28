@@ -25,7 +25,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
+from tensorflow.keras.applications.inception_v3 import preprocess_input
+from tensorflow.keras.preprocessing import image
 import argparse
 import os
 import numpy as np
@@ -56,49 +57,50 @@ def read_tensor_from_video_file(frame,
     resized_image = img.astype(np.float32)
     normalized_image = (resized_image - input_mean) / input_std
     result = np.expand_dims(normalized_image, 0)
-    return result
+    if(backend_name == "VAD-M"):
+        return normalized_image
+    else:
+        result = np.expand_dims(normalized_image, 0)
+        return result
+    
 
 
 def load_labels(label_file):
     label = []
+    assert os.path.exists(label_file), "Could not find label file path"
     proto_as_ascii_lines = tf.io.gfile.GFile(label_file).readlines()
     for l in proto_as_ascii_lines:
         label.append(l.rstrip())
     return label
 
-def run_video_infer(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, backend_name,flag_enable):
+def run_video_infer(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, backend_name,filename, output_filename):
     
     # Read input video file
     cap = cv2.VideoCapture(input_file)
+    video_writer = cv2.VideoWriter()
     frame_res = cap.read()
-    #video_writer = cv2.VideoWriter()
-    output_resolution = (input_height, input_width)
-    
     # Initialize session and run
     config = tf.compat.v1.ConfigProto()
-    video_writer = cv2.VideoWriter()
     output_resolution = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT )))
-    print(output_resolution)
-    print("video")
-    print(output_resolution)
-    video_writer.open("out_demo.mp4", cv2.VideoWriter_fourcc(*'MJPG'),
-                                                         20.0, output_resolution)
+    video_writer.open(output_filename, cv2.VideoWriter_fourcc(*'avc1'), 20.0, output_resolution)
+   
     with tf.compat.v1.Session(graph=graph, config=config) as sess:
         while cap.isOpened():
             ret, frame = cap.read()
-           
             if ret is True:
-                t = read_tensor_from_video_file(
-                    frame,
-                    input_height=input_height,
-                    input_width=input_width,
-                    input_mean=input_mean,
-                    input_std=input_std)
-
+                if(backend_name == "VAD-M"):
+                    xlist = []
+                    for i in range(1, 9):
+                        t = read_tensor_from_image_file(backend_name, image_path, input_height=input_height,input_width=input_width,input_mean=input_mean, input_std=input_std)
+                        xlist.append(t)
+                    x = np.stack(xlist)
+                else:
+                    x = read_tensor_from_video_file(frame,input_height=input_height, input_width=input_width, input_mean=input_mean,        input_std=input_std)
+                
                 # Run
                 start = time.time()
                 results = sess.run(output_operation.outputs[0],
-                                   {input_operation.outputs[0]: t})
+                                   {input_operation.outputs[0]: x})
                 elapsed = time.time() - start
                 fps = 1 / elapsed
                 print('Inference time in ms: %f' % (elapsed * 1000))
@@ -121,76 +123,89 @@ def run_video_infer(model_file, input_layer, output_layer,label_file,input_file,
                         cv2.putText(frame, '{0} : {1}'.format(
                             labels[i], results[i]), (30, c), font, font_size,
                                     color, font_thickness)
-                        print(labels[i], results[i])
+                       # print(labels[i], results[i])
                         c += 30
                 else:
                     print(
                         "No label file provided. Cannot print classification results"
                     )
-                name = "output" + '.jpg'
-
-                #cv2.imwrite(name,frame)
-               # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                                
-               # cv2.imshow("results", frame)
-                #cv2.imwrite("output_class.jpg",frame)
                 video_writer.write(frame)
+                cv2.imshow("results", frame)
                 if cv2.waitKey(1) & 0XFF == ord('q'):
                     break
             else:
                 print("Completed")
                 break
-    video_writer.release()
-   
     cap.release()
+    video_writer.release()
     cv2.destroyAllWindows()
-def read_tensor_from_image_file(file_name,
+def read_tensor_from_image_file(backend_name, image_file,
                                 input_height=299,
                                 input_width=299,
                                 input_mean=0,
                                 input_std=255):
-    assert os.path.exists(file_name), "Could not find image file path"
-    image = cv2.imread(file_name)
-    resized = cv2.resize(image, (input_height, input_width))
-    img = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
-    resized_image = img.astype(np.float32)
-    normalized_image = (resized_image - input_mean) / input_std
-    result = np.expand_dims(normalized_image, 0)
+    assert os.path.exists(image_file), "Could not find image file path"
+    img = image.load_img(image_file, target_size=(299, 299))
+    x = image.img_to_array(img)
+    
+    
+    if(backend_name == "VAD-M"):
+        result = preprocess_input(x)
+        return result
+    else:
+        x = np.expand_dims(x, axis=0)
+        result = preprocess_input(x)
+       # result = np.expand_dims(normalized_image, 0)
+        return result
 
-    return result
-
-def run_image_infer(model_file, input_layer, output_layer,label_file,file_name,input_height,input_width, input_mean,input_std, backend_name,flag_enable):
+def run_image_infer(model_file, input_layer, output_layer,label_file, file_name, input_height,input_width, input_mean,input_std, backend_name,filename):
     config = tf.compat.v1.ConfigProto()
     with tf.compat.v1.Session(graph=graph, config=config) as sess:
-        t = read_tensor_from_image_file(
-            file_name,
-            input_height=input_height,
-            input_width=input_width,
-            input_mean=input_mean,
-            input_std=input_std)
+        if(backend_name == "VAD-M"):
+                    xlist = []
+                    for i in range(1, 9):
+                        t = read_tensor_from_image_file(backend_name, file_name, input_height=input_height,input_width=input_width,input_mean=input_mean, input_std=input_std)
+                        xlist.append(t)
+                    x = np.stack(xlist)
+        else:
+            
+            x = read_tensor_from_image_file(backend_name, file_name, input_height=input_height, input_width=input_width, input_mean=input_mean, input_std=input_std)
 
         # Warmup
         results = sess.run(output_operation.outputs[0],
-                           {input_operation.outputs[0]: t})
+                           {input_operation.outputs[0]: x})
 
         # Run
         start = time.time()
         results = sess.run(output_operation.outputs[0],
-                           {input_operation.outputs[0]: t})
+                           {input_operation.outputs[0]: x})
         elapsed = time.time() - start
-        print('Inference time in ms: %f' % (elapsed * 1000))
-       # result_file_name = "results/" + "tensorflow_"+ str(flag_enable) + backend_name + ".txt"
+        
+      #  result_file_name = "results/" +  str(filename) + "_tensorflow_"+ backend_name + ".txt"
+       # assert os.path.isdir("results"), "Could not find results folder"
        # f = open(result_file_name, "w")
-        #f.write(str((elapsed * 1000)))
-        #f.close()
+        fps = 1/elapsed
+        if(backend_name == "VAD-M"):
+            fps = 8*fps    
+        print('Inference time in ms: %f' % float(1000/fps))
+        #f.write(str(fps))
+       # f.close()
     results = np.squeeze(results)
-
+    
     # print labels
     if label_file:
-        top_k = results.argsort()[-5:][::-1]
         labels = load_labels(label_file)
-        for i in top_k:
-            print(labels[i], results[i])
+        if(backend_name == "VAD-M"):
+            for j in range(0,1):
+                top_k = results[j].argsort()[-5:][::-1]
+                for i in top_k:
+                    print("\t",labels[i]," (", "{:.8f}".format(results[j][i]),")")
+        else:
+            top_k = results.argsort()[-5:][::-1]
+            
+            for i in top_k:
+                if(labels[i] and results[i]):
+                    print(labels[i], results[i])
     else:
         print("No label file provided. Cannot print classification results")
 
@@ -229,8 +244,9 @@ if __name__ == "__main__":
     parser.add_argument("-d","--backend", help="backend option. Default is CPU")
     parser.add_argument("-f", "--flag", help="disable backend")
     parser.add_argument("-it","--input_type", help="input type either video or image")
+    parser.add_argument("-of","--output_file", help="output video filename")
     args = parser.parse_args()
-
+    
     if args.graph:
         model_file = args.graph
         if not args.input_layer:
@@ -266,11 +282,11 @@ if __name__ == "__main__":
     output_operation = graph.get_operation_by_name(output_name)
 
     #Print list of available backends
-    
+    output_filename = args.output_file
     flag_enable = args.flag
     flag_input = args.input_type
     filename = ""
-    if(flag_enable == "tf"):
+    if(flag_enable == "native"):
         print('StockTensorflow')
         filename = "native"
         ovtf.disable()
@@ -279,19 +295,27 @@ if __name__ == "__main__":
         print('oneDNN optimized')
         ovtf.disable()
         os.environ['TF_ENABLE_ONEDNN_OPTS']='1'
-    else:
-        print('Available Backends:')
+    elif(flag_enable == "openvino"):
         filename = "openvino"
+        print('Openvino Integration With Tensorflow')
+        print('Available Backends:')
         backends_list = ovtf.list_backends()
         for backend in backends_list:
             print(backend)
+        os.environ['TF_ENABLE_ONEDNN_OPTS']='1'
         ovtf.set_backend(backend_name)
+    else:
+        raise AssertionError("flag_enable string not supported")
+   
     if label_file:
         labels = load_labels(label_file)
+    assert os.path.exists(input_file), "Could not find video file path"
+    
     if(flag_input == "video"):
-        run_video_infer(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, backend_name,flag_enable)
-    else:
+        run_video_infer(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, backend_name, filename, output_filename)
+    elif(flag_input == "image"):
         run_image_infer(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, backend_name,filename)
+    else:
+        raise AssertionError("flag input type string not supported")
     #Load the labels
     
-

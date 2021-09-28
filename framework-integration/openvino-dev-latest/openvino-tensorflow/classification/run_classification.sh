@@ -6,11 +6,10 @@ echo "MODEL:  $MODEL"
 echo "Input image" $INPUT_FILE
 
 
-export MODEL="/OVTF/classification_ovtf/data/"$MODEL
+export MODEL="/classification-ovtf/data/"$MODEL
 echo $MODEL >> /mount_folder/result_model.txt
-export LABELS="/OVTF/classification_ovtf/data/"$LABELS
+export LABELS="/classification-ovtf/data/"$LABELS
 
-ls -l /OVTF/classification_ovtf/data/
 
 source /opt/intel/openvino/bin/setupvars.sh
 
