@@ -354,12 +354,17 @@ def run(args):
 
         if statistics:
           statistics.dump()
-
-        print('Count:      {} iterations'.format(iteration))
+        print('COUNT:      {} iterations'.format(iteration))
         print('Duration:   {:.2f} ms'.format(get_duration_in_milliseconds(total_duration_sec)))
         if MULTI_DEVICE_NAME not in device_name:
             print('Latency:    {:.2f} ms'.format(latency_ms))
         print('Throughput: {:.2f} FPS'.format(fps))
+
+        if args.output_dir:
+            with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
+                f.write('Latency {:.2f} ms\n'.format(get_duration_in_milliseconds(total_duration_sec)))
+                f.write('Throughput: {:.2f} FPS\n'.format(fps))
+
 
         del exe_network
 

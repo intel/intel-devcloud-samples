@@ -8,6 +8,8 @@ RUN echo "Intel devcloud benchmak sample containerization begin ......."
 
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh
 
+RUN apt-get update && apt-get install vim -y
+
 ENV USERNAME=intel
 ENV PASSWORD=intel
 RUN usermod -a -G  intel  intel
