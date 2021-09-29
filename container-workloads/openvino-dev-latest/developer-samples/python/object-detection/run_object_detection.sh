@@ -30,9 +30,11 @@ SCALE_RESOLUTION=0.5  # scale output frame resolution
 
 source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh
 
-mkdir -p $RUN_ON_PREM/raw_models
+mkdir -p $RUN_ON_PREM/raw_models/public
 
-python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/model_downloader/downloader.py  --name $MODEL -o $RUN_ON_PREM/raw_models 
+#python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/model_downloader/downloader.py  --name $MODEL -o $RUN_ON_PREM/raw_models 
+
+cp -r mobilenet-ssd $RUN_ON_PREM/raw_models/public
 
 if [[ "$PRECISION" == *"$FP16"* ]];
 then
