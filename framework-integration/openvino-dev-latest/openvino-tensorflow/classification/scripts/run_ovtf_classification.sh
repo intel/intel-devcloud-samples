@@ -1,1 +1,1 @@
-sudo docker run -it object_detection_2021.4:latest
+sudo docker run -it ovtf-classification:2021.4.1
