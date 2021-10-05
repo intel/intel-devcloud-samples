@@ -62,6 +62,6 @@ RUN chmod -R 777 /classification-ovtf
 RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.0/tensorflow_abi1-2.5.1-cp36-cp36m-manylinux2010_x86_64.whl
 RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.0/openvino_tensorflow_abi1-1.0.0-cp36-cp36m-manylinux2014_x86_64.whl
 
-ENTRYPOINT /bin/bash -c "source run_classification.sh"
+ENTRYPOINT /bin/bash -c "source run_ovtf_classification.sh"
 
 
