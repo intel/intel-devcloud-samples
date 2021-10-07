@@ -60,31 +60,3 @@ then
 fi
 
 
-if [[ "$PRECISION" == *"$F32"* ]];
-then
-
-        echo "Creating output folder \$FP32"
-        mkdir -p $Output_folder_32
-        mkdir -p $XML_IR_FP32
-	python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
-	--input_model frozen_darknet_yolov3_model.pb \
-	--transformations_config /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/extensions/front/tf/yolo_v3_tiny.json \
-	--data_type $FP32 \
-	--batch 1 \
-	--output_dir $XML_IR_FP32
-
-
-
-        echo $XML_IR_FP32
-         # Run the Tiny YOLO V3 object detection code - FP16 model
-        python3 object_detection_demo_yolov3_async.py -m $XML_IR_FP32/frozen_darknet_yolov3_model.xml \
-                 -i $INPUT_FILE \
-                 -o $Output_folder_32 \
-                 -d $DEVICE \
-                 -t $THRESHOLD \
-                 -nireq $NUMREQUEST \
-                 -nstreams $NUMSTREAMS \
-                 -no_show \
-                 --labels $LABEL_FILE
-
-fi
