@@ -1,1 +1,1 @@
-sudo docker run -it object_detection_2021.4_fp16:latest
+sudo docker run -it object_detection_2021.4:latest
