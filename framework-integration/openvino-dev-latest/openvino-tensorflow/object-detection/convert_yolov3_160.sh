@@ -33,4 +33,4 @@ cp coco.names ../../data/
 cd ../..
 pwd
 deactivate
-#rm -rf temp_build
+rm -rf temp_build
