@@ -1,4 +1,4 @@
-FROM docker.io/openvino/ubuntu18_dev:latest
+FROM docker.io/openvino/ubuntu18_runtime:2021.4.1
 
 USER root
 
@@ -73,7 +73,7 @@ WORKDIR /object-detection-ovtf
 
 RUN /bin/bash -c "source convert_yolov3_160.sh"
 
-RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.1/tensorflow_abi1-2.5.1-cp36-cp36m-manylinux2010_x86_64.whl
+RUN pip3 install pillow https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.1/tensorflow_abi1-2.5.1-cp36-cp36m-manylinux2010_x86_64.whl
 RUN pip3 install ./data/openvino_tensorflow-1.0.1-cp36-cp36m-manylinux2014_x86_64.whl
 
 ENTRYPOINT /bin/bash -c "source run_ovtf_objectdetection.sh"
