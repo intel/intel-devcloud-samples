@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-FROM docker.io/openvino/ubuntu18_runtime:2021.4.1
-=======
 
-FROM docker.io/openvino/ubuntu18_dev:latest
->>>>>>> 6afc8d732e71b5e6b6cafb59056c283c929f3ff5
+FROM docker.io/openvino/ubuntu18_runtime:2021.4.1
 
 USER root
 
