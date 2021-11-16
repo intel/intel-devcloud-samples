@@ -8,6 +8,8 @@ RUN echo "Intel devcloud benchmak sample containerization begin ......."
 
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh
 
+RUN apt-get update && apt-get install vim -y
+
 ENV USERNAME=intel
 ENV PASSWORD=intel
 RUN usermod -a -G  intel  intel
@@ -35,7 +37,7 @@ ENV PATH ${INTEL_OPENVINO_DIR}/python/samples:$PATH
 ARG DEVICE="CPU"
 ENV DEVICE=$DEVICE
 
-ARG PRECISION="FP16,FP32"
+ARG PRECISION="FP16"
 ENV PRECISION="$PRECISION"
 
 ARG OPENVINO_VERSION="2021.4.582"

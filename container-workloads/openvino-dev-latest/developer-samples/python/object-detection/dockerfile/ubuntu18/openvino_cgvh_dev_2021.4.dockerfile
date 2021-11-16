@@ -4,6 +4,8 @@ RUN echo "OpenVINO installation done  ......."
 RUN echo "Intel devcloud Sample containerization begin ......."
 
 USER root
+
+RUN apt-get update && apt-get install vim -y
 RUN chmod 0777 ${INTEL_OPENVINO_DIR}/python
 
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
@@ -17,7 +19,7 @@ ENV PATH ${INTEL_OPENVINO_DIR}/python/samples:$PATH
 ARG DEVICE="CPU"
 ENV DEVICE=$DEVICE
 
-ARG PRECISION="FP16,FP32"
+ARG PRECISION="FP16"
 ENV PRECISION="$PRECISION"
 
 ARG OPENVINO_VERSION="2021.4.582"

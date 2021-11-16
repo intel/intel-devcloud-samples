@@ -45,28 +45,9 @@ then
             -niter 10 \
             -api $API \
             --report_type detailed_counters \
-            --report_folder $Output_folder_16
+            --output_dir $Output_folder_16
+
+   cp  /opt/intel/openvino_$OPENVINO_VERSION/python/samples/benchmark/*.csv  $Output_folder_16 
 
 fi
 
-if [[ "$PRECISION" == *"$F32"* ]];
-then
-   echo "Creating output folder \$FP32"
-   mkdir -p $Output_folder_32
-   mkdir -p $XML_IR_FP32
-   python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
-   --input_model $RUN_ON_PREM/models/public/resnet-50-tf/resnet_v1-50.pb \
-   --input_shape=[1,224,224,3] \
-   --mean_values=[123.68,116.78,103.94] \
-   --data_type $FP32 \
-   --output_dir $XML_IR_FP32 \
-
-
-   #For IR 32
-   python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/benchmark_tool/benchmark_app.py -m $XML_IR_FP32/resnet_v1-50.xml \
-            -d $DEVICE \
-            -niter 10 \
-            -api $API \
-            --report_type detailed_counters \
-            --report_folder $Output_folder_32
-fi
