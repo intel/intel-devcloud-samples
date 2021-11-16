@@ -15,6 +15,8 @@ source /opt/intel/openvino/bin/setupvars.sh
 
 echo "Using Openvino Integration with Tensorflow"
 
+export FLAG="openvino"
+
 python3 classification_sample_video_image.py -m $MODEL -i $INPUT_LAYER -o $OUTPUT_LAYER -ip $INPUT_FILE -l $LABELS -it $INPUT_TYPE -d $DEVICE -f $FLAG | tee /mount_folder/result_infer_ovtf.txt
 
 echo "Using Stock Tensorflow"
@@ -22,3 +24,4 @@ echo "Using Stock Tensorflow"
 export FLAG="native"
 
 python3 classification_sample_video_image.py -m $MODEL -i $INPUT_LAYER -o $OUTPUT_LAYER -ip $INPUT_FILE -l $LABELS -it $INPUT_TYPE -d $DEVICE -f $FLAG | tee /mount_folder/result_infer_tf.txt
+
