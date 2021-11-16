@@ -104,6 +104,13 @@ def parse_args():
                            " Please note, command line parameters have higher priority then parameters from configuration file.")
     args.add_argument('-qb', '--quantization_bits', type=int, required=False, default=None, choices=[8, 16],
                       help="Optional. Weight bits for quantization:  8 (I8) or 16 (I16) ")
+
+    args.add_argument('-o', '--output_dir',
+                        help='Location to store the results of the processing',
+                        default=None,
+                        required=True,
+                        type=str)
+    
     parsed_args = parser.parse_args()
 
     return parsed_args
