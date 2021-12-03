@@ -290,8 +290,6 @@ def run_image_detect(model_file, input_layer, output_layer,label_file,input_file
        # assert os.path.isdir("results"), "Could not find results folder"
         f = open(result_file_name, "w")
         fps = 1/elapsed
-          
-        print('Inference time in ms: %f' % float(elapsed))
         f.write('Throughput: {:.3g} FPS \n'.format(fps))
         f.write('Latency: {:.3f} ms\n'.format(elapsed*1000))
         f.close()
