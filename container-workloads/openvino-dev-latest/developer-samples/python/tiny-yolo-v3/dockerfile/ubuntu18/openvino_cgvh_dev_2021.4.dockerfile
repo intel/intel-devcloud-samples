@@ -1,5 +1,4 @@
-FROM quay.io/devcloud/devcloud-openvino-data-dev:2021.4_latest
-
+FROM openvino/ubuntu18_data_dev:2021.4.2
 RUN echo "OpenVINO installation done  ......."
 RUN echo "Intel devcloud Sample containerization begin ......."
 
@@ -17,25 +16,16 @@ RUN apt-get update \
 
 RUN pip install tensorflow==1.15.5
 
-ENV USERNAME=intel
-ENV PASSWORD=intel
-
-RUN usermod -a -G  intel  intel
 
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
 
 ADD  developer-samples/python/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3
-RUN chown -R  intel:intel  ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}/python  ${INTEL_OPENVINO_DIR}/python/samples  ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/deployment_tools ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites  /var/lib/dpkg
-
-RUN usermod -a -G  intel  intel
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
 ADD  developer-samples/python/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3
-RUN chown -R  intel:intel  ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}/python  ${INTEL_OPENVINO_DIR}/python/samples  ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3 ${INTEL_OPENVINO_DIR}/deployment_tools ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites  /var/lib/dpkg
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/mo.py
 RUN chmod -R 777 ${INTEL_OPENVINO_DIR}/python/samples/
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/tiny-yolo-v3/*.sh
 
-USER intel
 
 ENV PATH ${INTEL_OPENVINO_DIR}/python/samples:$PATH
 
@@ -45,7 +35,7 @@ ENV DEVICE=$DEVICE
 ARG PRECISION="FP16"
 ENV PRECISION="$PRECISION"
 
-ARG OPENVINO_VERSION="2021.4.582"
+ARG OPENVINO_VERSION="2021.4.752"
 ENV OPENVINO_VERSION=$OPENVINO_VERSION
 
 ARG OUTPUT_FOLDER="output_tiny-yolo-v3_latest"
