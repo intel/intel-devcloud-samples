@@ -1,6 +1,4 @@
-
 FROM docker.io/openvino/ubuntu18_runtime:2021.4.1
-
 
 USER root
 
