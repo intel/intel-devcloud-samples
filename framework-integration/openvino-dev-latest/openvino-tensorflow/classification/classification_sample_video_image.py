@@ -181,15 +181,16 @@ def run_image_infer(model_file, input_layer, output_layer,label_file, file_name,
                            {input_operation.outputs[0]: x})
         elapsed = time.time() - start
         
-      #  result_file_name = "results/" +  str(filename) + "_tensorflow_"+ backend_name + ".txt"
+        result_file_name = "/mount_folder/" +"performance.txt"
        # assert os.path.isdir("results"), "Could not find results folder"
-       # f = open(result_file_name, "w")
+        f = open(result_file_name, "w")
         fps = 1/elapsed
         if(backend_name == "VAD-M"):
             fps = 8*fps    
         print('Inference time in ms: %f' % float(1000/fps))
-        #f.write(str(fps))
-       # f.close()
+        f.write('Throughput: {:.3g} FPS \n'.format(fps))
+        f.write('Latency: {:.3f} ms\n'.format(1000*elapsed))
+        f.close()
     results = np.squeeze(results)
     
     # print labels

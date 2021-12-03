@@ -1,17 +1,28 @@
-FROM quay.io/devcloud/devcloud-openvino-data-dev:2021.4_latest
+FROM docker.io/openvino/ubuntu18_runtime:2021.4.1
 
 USER root
 
 ADD framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection /object-detection-ovtf
+
+ADD framework-integration/openvino-dev-latest/openvino-tensorflow/data /object-detection-ovtf/data
+
 RUN chmod 0777 /object-detection-ovtf
 RUN chgrp -R 0 /object-detection-ovtf && \
     chmod -R g=u /object-detection-ovtf
+
+
+RUN apt update && apt -y install wget gcc-8 unzip libssl1.0.0 software-properties-common && add-apt-repository ppa:ubuntu-toolchain-r/test && apt update && apt -y install --only-upgrade libstdc++6
+
 
 RUN ls
 RUN pwd
 RUN chmod 777 /object-detection-ovtf/*.sh
 
 RUN echo "Intel devcloud Sample containerization begin ......."
+
+
+ARG OPENVINO_VERSION="2021.4.689"
+ENV OPENVINO_VERSION=$OPENVINO_VERSION
 
 ARG FLAG="openvino"
 ENV FLAG=$FLAG
@@ -63,12 +74,13 @@ RUN echo "Executing Object Detection sample using Intel Openvino Integration wit
 RUN apt-get update && apt-get install -y git wget
 
 WORKDIR /object-detection-ovtf
-RUN mkdir data 
+
 
 RUN /bin/bash -c "source convert_yolov3_160.sh"
 
-RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.0/tensorflow_abi1-2.5.1-cp36-cp36m-manylinux2010_x86_64.whl
-RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.0/openvino_tensorflow_abi1-1.0.0-cp36-cp36m-manylinux2014_x86_64.whl
+RUN pip3 install pillow https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.1/tensorflow_abi1-2.5.1-cp36-cp36m-manylinux2010_x86_64.whl
+RUN pip3 install ./data/openvino_tensorflow-1.0.1-cp36-cp36m-manylinux2014_x86_64.whl
+
 
 ENTRYPOINT /bin/bash -c "source run_ovtf_objectdetection.sh"
 
