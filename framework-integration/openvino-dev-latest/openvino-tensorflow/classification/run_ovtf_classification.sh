@@ -7,7 +7,8 @@ echo "Input image" $INPUT_FILE
 
 
 export MODEL="/classification-ovtf/data/"$MODEL
-echo $MODEL >> /mount_folder/result_model.txt
+echo $MODEL >> /mount_folder/model.txt
+cp -ir $INPUT_FILE /mount_folder/
 export LABELS="/classification-ovtf/data/"$LABELS
 
 
