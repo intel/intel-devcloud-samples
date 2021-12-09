@@ -19,8 +19,9 @@ import logging
 import threading
 import os
 import sys
-import applicationMetricWriter
-from qarpo.demoutils import *
+import time
+#import applicationMetricWriter
+#from qarpo.demoutils import *
 from collections import deque
 from argparse import ArgumentParser, SUPPRESS
 from math import exp as exp
@@ -440,7 +441,7 @@ def main():
 
             next_frame_id_to_show += 1
             duration2 = perf_counter() - mode_info[mode.current].last_start_time
-            applicationMetricWriter.send_inference_time(duration2)
+            #applicationMetricWriter.send_inference_time(duration2)
 
             if is_same_mode:
                 mode_info[mode.current].frames_count += 1
@@ -494,8 +495,8 @@ def main():
             put_highlighted_text(frame, mode_message, (10, int(origin_im_size[0] - 20)),
                                  cv2.FONT_HERSHEY_COMPLEX, 0.75, (10, 10, 200), 2)
             
-            if (mode_info[mode.current].frames_count%10 == 0 or mode_info[mode.current].frames_count == video_length) and mode_info[mode.current].frames_count != 0:
-                    progressUpdate(inference_file, (time.time()-start), mode_info[mode.current].frames_count, video_length)
+            #if (mode_info[mode.current].frames_count%10 == 0 or mode_info[mode.current].frames_count == video_length) and mode_info[mode.current].frames_count != 0:
+                    #progressUpdate(inference_file, (time.time()-start), mode_info[mode.current].frames_count, video_length)
             if not args.no_show:
                 cv2.imshow("Detection Results", frame)
                 key = cv2.waitKey(wait_key_time)
