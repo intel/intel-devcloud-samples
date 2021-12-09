@@ -25,10 +25,7 @@ import logging as log
 import numpy as np
 import io
 from openvino.inference_engine import IECore
-#from qarpo.demoutils import *
 import cv2
-#import applicationMetricWriter
-#from qarpo.demoutils import progressUpdate
 
 def build_argparser():
     parser = ArgumentParser()
@@ -135,9 +132,9 @@ def main():
 
     #job_id = str(os.environ['PBS_JOBID'])
     result_file = open(os.path.join(args.output_dir, f'output.txt'), "w")
-    #print("input file created")
-    #pre_infer_file = os.path.join(args.output_dir, f'pre_progress.txt')
-    #infer_file = os.path.join(args.output_dir, f'i_progress.txt')
+    print("input file created")
+    pre_infer_file = os.path.join(args.output_dir, f'pre_progress.txt')
+    infer_file = os.path.join(args.output_dir, f'i_progress.txt')
     processed_vid = '/tmp/processed_vid.bin'
 
     # Read and pre-process input image
@@ -170,7 +167,7 @@ def main():
             f.write(bin_frame)
             id_ += 1
             #if id_%10 == 0: 
-             #   progressUpdate(pre_infer_file, time.time()-time_start, id_, video_len) 
+                #progressUpdate(pre_infer_file, time.time()-time_start, id_, video_len) 
     cap.release()
 
     if args.labels:
@@ -211,7 +208,7 @@ def main():
 
                 # Write data to progress tracker
                 #if frame_count % 10 == 0: 
-                 #   progressUpdate(infer_file, time.time()-infer_time_start, frame_count+1, video_len+1) 
+                    #progressUpdate(infer_file, time.time()-infer_time_start, frame_count+1, video_len+1) 
 
                 # Increment counter for the inference queue and roll them over if necessary 
                 current_inference += 1

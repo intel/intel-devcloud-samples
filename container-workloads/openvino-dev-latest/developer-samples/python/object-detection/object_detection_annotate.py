@@ -6,8 +6,6 @@ import numpy as np
 import io
 from argparse import ArgumentParser
 
-#from qarpo.demoutils import progressUpdate
-
 class ResultData:
     frame_id=""
     xmin=""
@@ -34,7 +32,7 @@ def placeBoxes(frame, rd):
 
     return frame
 
-def post_process(input_stream, input_data, out_path, progress_data, scale_frame_rate, scale_resolution):
+def post_process(input_stream, input_data, out_path, scale_frame_rate, scale_resolution):
     post_process_time_start = time.time()
     cap = cv2.VideoCapture(input_stream)
     if cap.isOpened():   
@@ -115,7 +113,7 @@ def main():
     print(f"args.scale_frame_rate={args.scale_frame_rate}")
     print(f"args.scale_resolution={args.scale_resolution}")
 
-    post_process( args.input, input_data, output_stream, progress_data, args.scale_frame_rate, args.scale_resolution )
+    post_process( args.input, input_data, output_stream, args.scale_frame_rate, args.scale_resolution )
 
 if __name__ == '__main__':
     main()

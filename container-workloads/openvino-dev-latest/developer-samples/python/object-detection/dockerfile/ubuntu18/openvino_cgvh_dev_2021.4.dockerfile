@@ -1,9 +1,11 @@
 FROM openvino/ubuntu18_data_dev:2021.4.2
+
 RUN echo "OpenVINO installation done  ......."
 RUN echo "Intel devcloud Sample containerization begin ......."
 
 USER root
 
+RUN apt-get update && apt-get install vim -y
 RUN chmod 0777 ${INTEL_OPENVINO_DIR}/python
 
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
