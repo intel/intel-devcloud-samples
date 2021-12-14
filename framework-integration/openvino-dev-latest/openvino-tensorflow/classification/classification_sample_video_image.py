@@ -158,7 +158,7 @@ def read_tensor_from_image_file(backend_name, image_file,
        # result = np.expand_dims(normalized_image, 0)
         return result
 
-def run_image_infer(model_file, input_layer, output_layer,label_file, file_name, input_height,input_width, input_mean,input_std, backend_name,filename):
+def run_image_infer(model_file, input_layer, output_layer,label_file, file_name, input_height,input_width, input_mean,input_std, backend_name,filename,flag_enable):
     config = tf.compat.v1.ConfigProto()
     with tf.compat.v1.Session(graph=graph, config=config) as sess:
         if(backend_name == "VAD-M"):
@@ -182,8 +182,15 @@ def run_image_infer(model_file, input_layer, output_layer,label_file, file_name,
         elapsed = time.time() - start
         
         result_file_name = "/mount_folder/" +"performance.txt"
+
        # assert os.path.isdir("results"), "Could not find results folder"
-        f = open(result_file_name, "w")
+        print(result_file_name)
+        if(flag_enable == "openvino"): 
+            f = open(result_file_name, "w")
+            f.write('Openvino Integration with Tensorflow \n')    
+        else:
+            f = open(result_file_name, "a")
+            f.write('Stock Tensorflow \n')
         fps = 1/elapsed
         if(backend_name == "VAD-M"):
             fps = 8*fps    
@@ -203,10 +210,16 @@ def run_image_infer(model_file, input_layer, output_layer,label_file, file_name,
                     print("\t",labels[i]," (", "{:.8f}".format(results[j][i]),")")
         else:
             top_k = results.argsort()[-5:][::-1]
-            
+            result_file_name = "/mount_folder/" +"performance.txt"
+            f = open(result_file_name, "a")
+            st = ""
             for i in top_k:
                 if(labels[i] and results[i]):
                     print(labels[i], results[i])
+                    st = st + labels[i]+" \t"+ str(results[i])+" \n"
+
+            f.write(st)
+            f.close()
     else:
         print("No label file provided. Cannot print classification results")
 
@@ -315,7 +328,7 @@ if __name__ == "__main__":
     if(flag_input == "video"):
         run_video_infer(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, backend_name, filename, output_filename)
     elif(flag_input == "image"):
-        run_image_infer(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, backend_name,filename)
+        run_image_infer(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, backend_name,filename,flag_enable)
     else:
         raise AssertionError("flag input type string not supported")
     #Load the labels

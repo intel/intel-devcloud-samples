@@ -11,7 +11,7 @@ RUN chgrp -R 0 /object-detection-ovtf && \
     chmod -R g=u /object-detection-ovtf
 
 
-RUN apt update && apt -y install wget gcc-8 unzip libssl1.0.0 software-properties-common && add-apt-repository ppa:ubuntu-toolchain-r/test && apt update && apt -y install --only-upgrade libstdc++6
+RUN apt update && apt -y install python-opencv wget gcc-8 unzip libssl1.0.0 software-properties-common && add-apt-repository ppa:ubuntu-toolchain-r/test && apt update && apt -y install --only-upgrade libstdc++6
 
 
 RUN ls
