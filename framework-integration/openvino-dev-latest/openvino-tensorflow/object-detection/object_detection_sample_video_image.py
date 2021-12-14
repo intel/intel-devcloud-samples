@@ -268,7 +268,7 @@ def run_video_detect(model_file, input_layer, output_layer,label_file,input_file
     cap.release()
     cv2.destroyAllWindows()
 
-def run_image_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename):
+def run_image_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename, flag_enable):
     img_resized, img = letter_box_image(input_file, input_height, input_width,
                                         128)
     img_resized = img_resized.astype(np.float32)
@@ -288,12 +288,12 @@ def run_image_detect(model_file, input_layer, output_layer,label_file,input_file
         print('Inference time in ms: %f' % (elapsed * 1000))
 
         result_file_name = "/mount_folder/" +"performance.txt"
-        if(os.path.exists(result_file_name)):        
+        if(flag_enable == "openvino"):
+            f = open(result_file_name, "w")
+            f.write('Openvino Integration with Tensorflow \n')       
+        else:
             f = open(result_file_name, "a")
             f.write('Stock Tensorflow \n')
-        else:
-            f = open(result_file_name, "w")
-            f.write('Openvino Integration with Tensorflow \n')
          
        
        # assert os.path.isdir("results"), "Could not find results folder"
@@ -437,7 +437,7 @@ if __name__ == "__main__":
     if(flag_input == "video"):
         run_video_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename)
     elif(flag_input == "image"):
-        run_image_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename)
+        run_image_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename, flag_enable)
     else:
         raise AssertionError("flag input type string not supported")
     
