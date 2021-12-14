@@ -182,8 +182,15 @@ def run_image_infer(model_file, input_layer, output_layer,label_file, file_name,
         elapsed = time.time() - start
         
         result_file_name = "/mount_folder/" +"performance.txt"
+
        # assert os.path.isdir("results"), "Could not find results folder"
-        f = open(result_file_name, "w")
+        print(result_file_name)
+        if(os.path.exists(result_file_name)):        
+            f = open(result_file_name, "a")
+            f.write('Stock Tensorflow \n')
+        else:
+            f = open(result_file_name, "w")
+            f.write('Openvino Integration with Tensorflow \n')
         fps = 1/elapsed
         if(backend_name == "VAD-M"):
             fps = 8*fps    
@@ -203,10 +210,16 @@ def run_image_infer(model_file, input_layer, output_layer,label_file, file_name,
                     print("\t",labels[i]," (", "{:.8f}".format(results[j][i]),")")
         else:
             top_k = results.argsort()[-5:][::-1]
-            
+            result_file_name = "/mount_folder/" +"performance.txt"
+            f = open(result_file_name, "a")
+            st = ""
             for i in top_k:
                 if(labels[i] and results[i]):
                     print(labels[i], results[i])
+                    st = st + labels[i]+" \t"+ str(results[i])+" \n"
+
+            f.write(st)
+            f.close()
     else:
         print("No label file provided. Cannot print classification results")
 

@@ -32,6 +32,7 @@ import tensorflow as tf
 import openvino_tensorflow as ovtf
 import time
 import cv2
+
 from PIL import Image, ImageFont, ImageDraw
 
 
@@ -195,13 +196,12 @@ def run_video_detect(model_file, input_layer, output_layer,label_file,input_file
         output_filename = output_dir+"/"+backend_name+"_"+output_filename
     else:
         output_filename = backend_name+"_"+output_filename
-   
     video_writer.open(output_filename, cv2.VideoWriter_fourcc(*'avc1'), 20.0, output_resolution)
     frame_count = 0
     curr_fps = 0
     config = tf.compat.v1.ConfigProto()
     with tf.compat.v1.Session(graph=graph, config=config) as sess:
-        while cap.isOpened():
+         while cap.isOpened():
             ret, frame = cap.read()
             if ret is True:
                 # pre-processing steps
@@ -209,6 +209,7 @@ def run_video_detect(model_file, input_layer, output_layer,label_file,input_file
                 #img_resized = cv2.resize(frame, (input_height, input_width))
                 # Run
                 frameID = cap.get(cv2.CAP_PROP_POS_FRAMES)
+
                 start = time.time()
                 if(backend_name == "VAD-M"):
                     xlist = []
@@ -285,10 +286,18 @@ def run_image_detect(model_file, input_layer, output_layer,label_file,input_file
                                   {input_operation.outputs[0]: [img_resized]})
         elapsed = time.time() - start
         print('Inference time in ms: %f' % (elapsed * 1000))
-        
+
         result_file_name = "/mount_folder/" +"performance.txt"
+        if(os.path.exists(result_file_name)):        
+            f = open(result_file_name, "a")
+            f.write('Stock Tensorflow \n')
+        else:
+            f = open(result_file_name, "w")
+            f.write('Openvino Integration with Tensorflow \n')
+         
+       
        # assert os.path.isdir("results"), "Could not find results folder"
-        f = open(result_file_name, "w")
+        #f = open(result_file_name, "w")
         fps = 1/elapsed
         f.write('Throughput: {:.3g} FPS \n'.format(fps))
         f.write('Latency: {:.3f} ms\n'.format(elapsed*1000))
@@ -423,7 +432,7 @@ if __name__ == "__main__":
         ovtf.set_backend(backend_name)
     else:
         raise AssertionError("flag_enable string not supported")
-        
+    
     assert os.path.exists(input_file), "Could not find video file path"
     if(flag_input == "video"):
         run_video_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename)
