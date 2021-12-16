@@ -33,7 +33,7 @@ from argparse import ArgumentParser
 from inference import Network
 from pathlib import Path
 sys.path.insert(0, str(Path().resolve().parent.parent))
-from qarpo.demoutils import *
+#from qarpo.demoutils import *
 
 def build_argparser():
     """
@@ -197,8 +197,8 @@ def main():
                     perf_count = infer_network.performance_counter(pre_request_id)
                     performance_counts(perf_count)
 
-                if len(result_list)%10 == 0 or len(result_list) == video_len:
-                    progressUpdate(progress_file_path, time.time()-infer_time_start, frame_count, video_len)
+                #if len(result_list)%10 == 0 or len(result_list) == video_len:
+                    #progressUpdate(progress_file_path, time.time()-infer_time_start, frame_count, video_len)
 
                 if len(result_list) == video_len:
                     break
@@ -245,8 +245,8 @@ def main():
         last_count = current_count
         people_counter.write(frame)
         frame_count += 1
-        if frame_count%10 == 0:
-            progressUpdate(post_progress_file_path, time.time()-post_processing_time_start, frame_count, video_len)
+        #if frame_count%10 == 0:
+            #progressUpdate(post_progress_file_path, time.time()-post_processing_time_start, frame_count, video_len)
 
 
 if __name__ == '__main__':

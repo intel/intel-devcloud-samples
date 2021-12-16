@@ -6,7 +6,7 @@ import numpy as np
 import io
 from argparse import ArgumentParser
 
-from qarpo.demoutils import progressUpdate
+#from qarpo.demoutils import progressUpdate
 
 class ResultData:
     frame_id=""
@@ -81,7 +81,7 @@ def post_process(input_stream, input_data, out_path, progress_data, scale_frame_
         frame_count += 1
         
         # report progress
-        progressUpdate(progress_data, int(time.time()-post_process_time_start), frame_count, video_len)
+        # progressUpdate(progress_data, int(time.time()-post_process_time_start), frame_count, video_len)
 
         key = cv2.waitKey(1)
         if key == 27:
