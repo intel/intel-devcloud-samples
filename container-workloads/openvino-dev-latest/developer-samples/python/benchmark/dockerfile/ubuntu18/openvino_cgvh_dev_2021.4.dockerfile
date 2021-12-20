@@ -1,3 +1,4 @@
+#Building openvino base image from public source  
 FROM openvino/ubuntu18_data_dev:2021.4.2
 
 RUN echo "OpenVINO installation done  ......."
@@ -8,11 +9,6 @@ RUN echo "Intel devcloud benchmak sample containerization begin ......."
 
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites/install_prerequisites.sh
 
-#RUN apt-get update && apt-get install vim -y
-
-#ENV USERNAME=intel
-#ENV PASSWORD=intel
-#RUN usermod -a -G  intel  intel
 
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
 
@@ -23,14 +19,12 @@ COPY developer-samples/python/benchmark/main.py ${INTEL_OPENVINO_DIR}/python/pyt
 COPY developer-samples/python/benchmark/main.py ${INTEL_OPENVINO_DIR}/python/python3.6/openvino/tools/benchmark/main.py
 COPY developer-samples/python/benchmark/main.py ${INTEL_OPENVINO_DIR}/python/python3.6/openvino/tools/benchmark/main.py
 COPY developer-samples/python/benchmark/benchmark.sh ${INTEL_OPENVINO_DIR}/python/samples/benchmark
-#RUN chown -R  intel:intel  ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}/python  ${INTEL_OPENVINO_DIR}/python/samples  ${INTEL_OPENVINO_DIR}/deployment_tools ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/install_prerequisites  /var/lib/dpkg ${INTEL_OPENVINO_DIR}/python/samples/benchmark
 
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/mo.py
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/benchmark
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/benchmark/*.sh
 
-#USER intel
 
 ENV PATH ${INTEL_OPENVINO_DIR}/python/samples:$PATH
 
