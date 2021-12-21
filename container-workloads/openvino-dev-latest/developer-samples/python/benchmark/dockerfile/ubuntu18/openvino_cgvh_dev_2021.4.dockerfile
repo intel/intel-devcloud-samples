@@ -17,7 +17,6 @@ ADD developer-samples/python/benchmark/benchmark ${INTEL_OPENVINO_DIR}/python/py
 ADD developer-samples/python/benchmark/benchmark ${INTEL_OPENVINO_DIR}/python/python3.6/openvino/tools/benchmark
 COPY developer-samples/python/benchmark/main.py ${INTEL_OPENVINO_DIR}/python/python3.7/openvino/tools/benchmark/main.py
 COPY developer-samples/python/benchmark/main.py ${INTEL_OPENVINO_DIR}/python/python3.6/openvino/tools/benchmark/main.py
-COPY developer-samples/python/benchmark/main.py ${INTEL_OPENVINO_DIR}/python/python3.6/openvino/tools/benchmark/main.py
 COPY developer-samples/python/benchmark/benchmark.sh ${INTEL_OPENVINO_DIR}/python/samples/benchmark
 
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/mo.py
