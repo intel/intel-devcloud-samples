@@ -20,9 +20,7 @@ COPY developer-samples/python/benchmark/main.py ${INTEL_OPENVINO_DIR}/python/pyt
 COPY developer-samples/python/benchmark/benchmark.sh ${INTEL_OPENVINO_DIR}/python/samples/benchmark
 
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/mo.py
-RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples
-RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/benchmark
-RUN chmod 777 ${INTEL_OPENVINO_DIR}/python/samples/benchmark/*.sh
+RUN chmod  -R 777 ${INTEL_OPENVINO_DIR}/python/samples
 
 
 ENV PATH ${INTEL_OPENVINO_DIR}/python/samples:$PATH
