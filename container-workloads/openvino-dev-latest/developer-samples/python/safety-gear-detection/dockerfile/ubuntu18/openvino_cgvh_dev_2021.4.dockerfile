@@ -1,3 +1,4 @@
+#Building openvino base image from public source
 FROM openvino/ubuntu18_data_dev:2021.4.2
 
 RUN echo "OpenVINO installation done  ......."

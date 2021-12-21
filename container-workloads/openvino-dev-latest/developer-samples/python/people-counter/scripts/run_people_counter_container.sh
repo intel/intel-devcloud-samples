@@ -1,1 +1,1 @@
-sudo docker run -e RUN_ON_PREM=data -it people-counter_2021.4.2:latest
+sudo docker run -it quay.io/devcloud/people-counter:2021.4-latest
