@@ -22,7 +22,7 @@ The following files are used in the application:
 | ``-e MODEL="resnet-50-tf"`` | Runs resnet 50 by default|
 | ``-e DEVICE=CPU`` | Supports ``GPU`` for running on capable integrated GPU. |
 | ``-e PRECISION=FP16`` | Will support ``FP32`` model precision in upcoming releases. |
-# | ``-e INPUT_FILE="/opt/intel/openvino_$OPENVINO_VERSION/python/samples/tiny-yolo-v3/classroom.mp4"`` | Input video file path inside the container | 
+| ``-e INPUT_FILE="/opt/intel/openvino_$OPENVINO_VERSION/python/samples/tiny-yolo-v3/classroom.mp4"`` | Input video file path inside the container | 
 | ``-e RUN_ON_PREM="/mount_folder"`` | Directory to save results to e.g. mount point to retrieve logs, results |
 
 ## Build and run on DevCloud
