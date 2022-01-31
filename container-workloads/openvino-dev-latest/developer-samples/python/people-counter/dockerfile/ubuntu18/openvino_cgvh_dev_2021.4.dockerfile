@@ -39,7 +39,7 @@ ENV RUN_ON_PREM=$RUN_ON_PREM
 ARG INPUT_FILE="resources/Pedestrain_Detect_2_1_1.mp4"
 ENV INPUT_FILE=$INPUT_FILE
 
-RUN source  ${INTEL_OPENVINO_DIR}/bin/setupvars.sh
+RUN ["/bin/bash", "-c", "source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh"]
 RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing object detection app using OpenVINO ......."
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/people-counter
