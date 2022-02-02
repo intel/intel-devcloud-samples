@@ -6,9 +6,7 @@ pipeline {
     }
     environment {
         SA_TOKEN = credentials('sample_token')
-        SYS_CREDENTIALS = credentials('jenkins_auth')
         SYSDIG_TOKEN = credentials('SYSDIG_TOKEN')
-        GITHUB_BRANCH = 'master'
         REGISTRY = 'default-route-openshift-image-registry.apps.cfa.devcloud.intel.com'
     }
     stages {
