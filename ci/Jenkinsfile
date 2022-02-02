@@ -26,12 +26,12 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/benchmark-test:2021.4.2
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/benchmark-test:2021.4.2
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/benchmark-test:2021.4.2
+                docker push ${REGISTRY}/devcloud-samples/benchmark-test:2021.4.2
                 '''
             }
         }
@@ -51,12 +51,12 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/object-detection:2021.4.2
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/object-detection:2021.4.2
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/object-detection:2021.4.2
+                docker push ${REGISTRY}/devcloud-samples/object-detection:2021.4.2
                 '''
             }
         }
@@ -76,12 +76,12 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/people-counter:2021.4.2
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/people-counter:2021.4.2
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/people-counter:2021.4.2
+                docker push ${REGISTRY}/devcloud-samples/people-counter:2021.4.2
                 '''
             }
         }
@@ -101,12 +101,12 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/safety-gear-detect:2021.4.2
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/safety-gear-detect:2021.4.2
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/safety-gear-detect:2021.4.2
+                docker push ${REGISTRY}/devcloud-samples/safety-gear-detect:2021.4.2
                 '''
             }
         }
@@ -126,12 +126,12 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/dlstreamer:2021.4.2
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/dlstreamer:2021.4.2
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/dlstreamer:2021.4.2
+                docker push ${REGISTRY}/devcloud-samples/dlstreamer:2021.4.2
                 '''
             }
         }
@@ -156,7 +156,7 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/tiny-yolo-v3:2021.4.2
+                docker push ${REGISTRY}/devcloud-samples/tiny-yolo-v3:2021.4.2
                 '''
             }
         }
@@ -176,12 +176,12 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/pneumonia-classification:2021.4.2
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/pneumonia-classification:2021.4.2
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/pneumonia-classification:2021.4.2
+                docker push ${REGISTRY}/devcloud-samples/pneumonia-classification:2021.4.2
                 '''
             }
         }
@@ -200,12 +200,12 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.1
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.1
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.1
+                docker push ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.1
                 '''
             }
         }
@@ -224,12 +224,12 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-                # docker push ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
+                docker push ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
                 '''
             }
         }
