@@ -17,15 +17,7 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 pwd
-                rm -rf *
-                '''
-            }
-        }
-        stage('Git Clone') {
-            steps {
-                sh'''#!/bin/bash
-                set -x
-                git clone -b ${GITHUB_BRANCH} https://${SYS_CREDENTIALS}@github.com/intel-innersource/containers.docker.devcloud.reference-samples.git
+                ls -la
                 '''
             }
         }
@@ -413,16 +405,14 @@ pipeline {
             sh'''#!/bin/bash
             set -x
             pwd
-            cd /home/ubuntu/workspace/iot-devcloudng-qa/reference-samples/iot-devcloud-reference-samples
-            sudo rm -rf *
+            ls -la
             '''
         }
         failure {
             sh'''
             set -x
             pwd
-            cd /home/ubuntu/workspace/iot-devcloudng-qa/reference-samples/iot-devcloud-reference-samples
-            sudo rm -rf *
+            ls -la
             '''
         }
     }
