@@ -10,15 +10,6 @@ pipeline {
         REGISTRY = 'default-route-openshift-image-registry.apps.cfa.devcloud.intel.com'
     }
     stages {
-        stage('Prepare Working Directory') {
-            steps {
-                sh'''#!/bin/bash
-                set -x
-                pwd
-                ls -la
-                '''
-            }
-        }
         stage('Build benchmark_python') {
             when {
                 expression { openvino_latest_benchmark_python == 'true' }
@@ -385,22 +376,6 @@ pipeline {
                 # docker push ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
                 '''
             }
-        }
-    }
-    post {
-        success {
-            sh'''#!/bin/bash
-            set -x
-            pwd
-            ls -la
-            '''
-        }
-        failure {
-            sh'''
-            set -x
-            pwd
-            ls -la
-            '''
         }
     }
 }
