@@ -10,6 +10,22 @@ pipeline {
         REGISTRY = 'default-route-openshift-image-registry.apps.cfa.devcloud.intel.com'
     }
     stages {
+        stage('openvino_base_image') {
+            when {
+                expression { openvino_base_image == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker pull docker.io/openvino/ubuntu18_data_dev:2021.4.2
+                '''
+                sh'''#!/bin/bash
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} docker.io/openvino/ubuntu18_data_dev:2021.4.2
+                '''
+            }
+        }
         stage('benchmark_python') {
             when {
                 expression { openvino_latest_benchmark_python == 'true' }
