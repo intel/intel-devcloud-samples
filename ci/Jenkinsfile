@@ -185,7 +185,7 @@ pipeline {
                 '''
             }
         }
-        stage('Build ovtf_classification') {
+        stage('ovtf_classification') {
             when {
                 expression { ovtf_classification_python == 'true' }
             }
