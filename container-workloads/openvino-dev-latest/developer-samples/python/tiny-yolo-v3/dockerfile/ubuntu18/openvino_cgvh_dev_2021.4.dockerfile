@@ -16,6 +16,8 @@ RUN apt-get update \
 && apt-get install -y vlc
 
 RUN pip install tensorflow==1.15.5
+#RUN pip install pillow==9.0.0
+RUN pip install numpy==1.19.0
 
 
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
