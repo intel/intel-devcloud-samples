@@ -1,0 +1,429 @@
+pipeline {
+    agent {
+        node {
+            label 'Dev_Cloud_Scanning'
+        }
+    }
+    environment {
+        SA_TOKEN = credentials('sample_token')
+        SYS_CREDENTIALS = credentials('jenkins_auth')
+        SYSDIG_TOKEN = credentials('SYSDIG_TOKEN')
+        GITHUB_BRANCH = 'master'
+        REGISTRY = 'default-route-openshift-image-registry.apps.cfa.devcloud.intel.com'
+    }
+    stages {
+        stage('Prepare Working Directory') {
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                pwd
+                rm -rf *
+                '''
+            }
+        }
+        stage('Git Clone') {
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                git clone -b ${GITHUB_BRANCH} https://${SYS_CREDENTIALS}@github.com/intel-innersource/containers.docker.devcloud.reference-samples.git
+                '''
+            }
+        }
+        stage('Build benchmark_python') {
+            when {
+                expression { openvino_latest_benchmark_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cp ./developer-samples/python/benchmark/scripts/build_benchmark_latest.sh .
+                    chmod +x build_benchmark_latest.sh
+                    ./build_benchmark_latest.sh
+                    docker tag benchmarking_2021.4.2:latest ${REGISTRY}/devcloud-samples/benchmark-test:2021.4.2
+                    '''
+                }
+            }
+        }
+        stage('Scan benchmark_python') {
+            when {
+                expression { openvino_latest_benchmark_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/benchmark-test:2021.4.2
+                '''
+            }
+        }
+        stage('Publish benchmark_python') {
+            when {
+                expression { openvino_latest_benchmark_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/benchmark-test:2021.4.2
+                '''
+            }
+        }
+        stage('Build object-detection-python') {
+            when {
+                expression { openvino_latest_object_detection_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cp ./developer-samples/python/object-detection/scripts/build_object_detection.sh .
+                    chmod +x build_object_detection.sh
+                    ./build_object_detection.sh
+                    docker tag object_detection_2021.4.2_fp16:latest ${REGISTRY}/devcloud-samples/object-detection:2021.4.2
+                    '''
+                }
+            }
+        }
+        stage('Scan object-detection-python') {
+            when {
+                expression { openvino_latest_object_detection_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/object-detection:2021.4.2
+                '''
+            }
+        }
+        stage('Publish object-detection-python') {
+            when {
+                expression { openvino_latest_object_detection_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/object-detection:2021.4.2
+                '''
+            }
+        }
+        stage('Build people_counter') {
+            when {
+                expression { people_counter_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cp ./developer-samples/python/people-counter/scripts/build_people_counter.sh .
+                    chmod +x build_people_counter.sh
+                    ./build_people_counter.sh
+                    docker tag people-counter_2021.4.2:latest ${REGISTRY}/devcloud-samples/people-counter:2021.4.2
+                    '''
+                }
+            }
+        }
+        stage('Scan people_counter') {
+            when {
+                expression { people_counter_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/people-counter:2021.4.2
+                '''
+            }
+        }
+        stage('Publish people_counter') {
+            when {
+                expression { people_counter_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/people-counter:2021.4.2
+                '''
+            }
+        }
+        stage('Build safety_gear_detect') {
+            when {
+                expression { safety_gear_detect_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cp ./developer-samples/python/safety-gear-detection/scripts/build_safety_gear_detection.sh .
+                    chmod +x build_safety_gear_detection.sh
+                    ./build_safety_gear_detection.sh
+                    docker tag safety_gear_detection_2021.4.2:latest ${REGISTRY}/devcloud-samples/safety-gear-detect:2021.4.2
+                    '''
+                }
+            }
+        }
+        stage('Scan safety_gear_detect') {
+            when {
+                expression { safety_gear_detect_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/safety-gear-detect:2021.4.2
+                '''
+            }
+        }
+        stage('Publish safety_gear_detect') {
+            when {
+                expression { safety_gear_detect_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/safety-gear-detect:2021.4.2
+                '''
+            }
+        }
+        stage('Build dlstreamer') {
+            when {
+                expression { dlstreamer_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cp ./tutorials/python/dlstreamer/scripts/build_dlstreamer.sh .
+                    chmod +x build_dlstreamer.sh
+                    ./build_dlstreamer.sh
+                    docker tag dlstreamer_2021.4.2:latest ${REGISTRY}/devcloud-samples/dlstreamer:2021.4.2
+                    '''
+                }
+            }
+        }
+        stage('Scan dlstreamer') {
+            when {
+                expression { dlstreamer_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/dlstreamer:2021.4.2
+                '''
+            }
+        }
+        stage('Publish dlstreamer') {
+            when {
+                expression { dlstreamer_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/dlstreamer:2021.4.2
+                '''
+            }
+        }
+        stage('Build tiny_yolo_v3') {
+            when {
+                expression { tiny_yolo_v3_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cp ./developer-samples/python/tiny-yolo-v3/scripts/build_tiny-yolo.sh .
+                    chmod +x build_tiny-yolo.sh
+                    ./build_tiny-yolo.sh
+                    docker tag tiny-yolo-v3_2021.4.2:latest ${REGISTRY}/devcloud-samples/tiny-yolo-v3:2021.4.2
+                    '''
+                }
+            }
+        }
+        stage('Scan tiny_yolo_v3') {
+            when {
+                expression { tiny_yolo_v3_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/tiny-yolo-v3:2021.4.2
+                '''
+            }
+        }
+        stage('Publish tiny_yolo_v3') {
+            when {
+                expression { tiny_yolo_v3_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/tiny-yolo-v3:2021.4.2
+                '''
+            }
+        }
+        stage('Build pneumonia_classification') {
+            when {
+                expression { pneumonia_classification_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cp ./developer-samples/python/pneumonia-classification/scripts/build_pneumonia_classification.sh .
+                    chmod +x build_pneumonia_classification.sh
+                    ./build_pneumonia_classification.sh
+                    docker tag pneumonia_classification_2021.4.2:latest ${REGISTRY}/devcloud-samples/pneumonia-classification:2021.4.2
+                    '''
+                }
+            }
+        }
+        stage('Scan pneumonia_classification') {
+            when {
+                expression { pneumonia_classification_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/pneumonia-classification:2021.4.2
+                '''
+            }
+        }
+        stage('Publish pneumonia_classification') {
+            when {
+                expression { pneumonia_classification_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/pneumonia-classification:2021.4.2
+                '''
+            }
+        }
+        stage('Build ovtf_classification') {
+            when {
+                expression { ovtf_classification_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/
+                    cp ./framework-integration/openvino-dev-latest/openvino-tensorflow/classification/scripts/build_ovtf_classification.sh .
+                    chmod +x build_ovtf_classification.sh
+                    ./build_ovtf_classification.sh
+                    docker tag ovtf-classification_2021.4.1:latest ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.1
+                    '''
+                }
+            }
+        }
+        stage('Scan ovtf_classification') {
+            when {
+                expression { ovtf_classification_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.1
+                '''
+            }
+        }
+        stage('Publish ovtf_classification') {
+            when {
+                expression { ovtf_classification_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.1
+                '''
+            }
+        }
+        stage('Build ovtf_object_detection') {
+            when {
+                expression { ovtf_object_detection_python == 'true' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh'''#!/bin/bash
+                    set -x
+                    cd ./containers.docker.devcloud.reference-samples/
+                    cp ./framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection/scripts/build_ovtf_object_detection.sh .
+                    chmod +x build_ovtf_object_detection.sh
+                    ./build_ovtf_object_detection.sh
+                    docker tag ovtf-object-detection_2021.4.1:latest ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
+                    '''
+                }
+            }
+        }
+        stage('Scan ovtf_object_detection') {
+            when {
+                expression { ovtf_object_detection_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd ./containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
+                '''
+            }
+        }
+        stage('Publish ovtf_object_detection') {
+            when {
+                expression { ovtf_object_detection_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
+                docker push ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
+                '''
+            }
+        }
+    }
+    post {
+        success {
+            sh'''#!/bin/bash
+            set -x
+            pwd
+            cd /home/ubuntu/workspace/iot-devcloudng-qa/reference-samples/iot-devcloud-reference-samples
+            sudo rm -rf *
+            '''
+        }
+        failure {
+            sh'''
+            set -x
+            pwd
+            cd /home/ubuntu/workspace/iot-devcloudng-qa/reference-samples/iot-devcloud-reference-samples
+            sudo rm -rf *
+            '''
+        }
+    }
+}
