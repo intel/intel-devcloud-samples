@@ -29,7 +29,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cd ./container-workloads/openvino-dev-latest/
                     cp ./developer-samples/python/benchmark/scripts/build_benchmark_latest.sh .
                     chmod +x build_benchmark_latest.sh
                     ./build_benchmark_latest.sh
@@ -45,7 +45,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/benchmark-test:2021.4.2
                 '''
@@ -71,7 +70,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cd ./container-workloads/openvino-dev-latest/
                     cp ./developer-samples/python/object-detection/scripts/build_object_detection.sh .
                     chmod +x build_object_detection.sh
                     ./build_object_detection.sh
@@ -87,7 +86,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/object-detection:2021.4.2
                 '''
@@ -113,7 +111,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cd ./container-workloads/openvino-dev-latest/
                     cp ./developer-samples/python/people-counter/scripts/build_people_counter.sh .
                     chmod +x build_people_counter.sh
                     ./build_people_counter.sh
@@ -129,7 +127,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/people-counter:2021.4.2
                 '''
@@ -155,7 +152,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cd ./container-workloads/openvino-dev-latest/
                     cp ./developer-samples/python/safety-gear-detection/scripts/build_safety_gear_detection.sh .
                     chmod +x build_safety_gear_detection.sh
                     ./build_safety_gear_detection.sh
@@ -171,7 +168,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/safety-gear-detect:2021.4.2
                 '''
@@ -197,7 +193,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cd ./container-workloads/openvino-dev-latest/
                     cp ./tutorials/python/dlstreamer/scripts/build_dlstreamer.sh .
                     chmod +x build_dlstreamer.sh
                     ./build_dlstreamer.sh
@@ -213,7 +209,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/dlstreamer:2021.4.2
                 '''
@@ -239,7 +234,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cd ./container-workloads/openvino-dev-latest/
                     cp ./developer-samples/python/tiny-yolo-v3/scripts/build_tiny-yolo.sh .
                     chmod +x build_tiny-yolo.sh
                     ./build_tiny-yolo.sh
@@ -255,7 +250,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/tiny-yolo-v3:2021.4.2
                 '''
@@ -281,7 +275,7 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                    cd ./container-workloads/openvino-dev-latest/
                     cp ./developer-samples/python/pneumonia-classification/scripts/build_pneumonia_classification.sh .
                     chmod +x build_pneumonia_classification.sh
                     ./build_pneumonia_classification.sh
@@ -297,7 +291,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/pneumonia-classification:2021.4.2
                 '''
@@ -323,7 +316,6 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/
                     cp ./framework-integration/openvino-dev-latest/openvino-tensorflow/classification/scripts/build_ovtf_classification.sh .
                     chmod +x build_ovtf_classification.sh
                     ./build_ovtf_classification.sh
@@ -339,7 +331,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.1
                 '''
@@ -365,7 +356,6 @@ pipeline {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh'''#!/bin/bash
                     set -x
-                    cd ./containers.docker.devcloud.reference-samples/
                     cp ./framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection/scripts/build_ovtf_object_detection.sh .
                     chmod +x build_ovtf_object_detection.sh
                     ./build_ovtf_object_detection.sh
@@ -381,7 +371,6 @@ pipeline {
             steps {
                 sh'''#!/bin/bash
                 set -x
-                cd ./containers.docker.devcloud.reference-samples
                 chmod +x ./ci/sysdig/scan.sh
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.1
                 '''
