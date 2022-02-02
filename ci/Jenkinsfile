@@ -151,7 +151,7 @@ pipeline {
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                # ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/tiny-yolo-v3:2021.4.2
+                ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/tiny-yolo-v3:2021.4.2
                 '''
                 sh'''#!/bin/bash
                 set -x
