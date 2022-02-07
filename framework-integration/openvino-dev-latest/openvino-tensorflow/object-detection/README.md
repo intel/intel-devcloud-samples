@@ -1,35 +1,35 @@
-# Object Detection using Openvino Integration with Tensorflow
-Use an optimized and pre-trained yolov4 network to detect objects in a image
+# # Opnvino Integration with Tensorflow Object Detection
+Use an optimized and pre-trained MobileNet-SSD neural network to detect vehicles in a pre-recorded video clip. 
 
 ## How It Works
-The sample uses Tensorflow APIs to detect objects in a image using Openvino integration with Tensorflow as backend.  The identified results i.e. boxes are drawn around the detected objects 
+The sample converts a **mobilenet-ssd** caffe model for optimized inference and feeds a video frame-by-frame to the OpenVINO Inference Engine. The identified results i.e. detected vehicles are stored to a text file which are used later to annotate all the frames of the original video.
 
 * [openvino_cgvh_dev_2021.4.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile): Utilizes [openvino/ubuntu18_runtime](https://hub.docker.com/r/openvino/ubuntu18_runtime) as the base image and defines configurable runtime environment variables.
-* [run_ovtf_objectdetection.sh](run_ovtf_objectdetection.sh): Serves as an entrypoint for the container sample, utilizes the pre-installed model optimizer to convert the mobilenet-ssd [caffe model](mobilenet-ssd/mobilenet-ssd.caffemodel) before running inference and annotation python scripts.
-* [object_detection.py](object_detection.py): Demonstrates asynchronous inference pipeline on input video file, and saves an ``output.txt`` file during execution with resulting bounding box coordinates, detected labels corresponding to IDs from [labels.txt](labels.txt), detection probabilities along with ``perfomance.txt`` capturing latency and throughput metrics.
-* [object_detection_annotate.py](safety_gear_detection_annotate.py): Reads the original video file, annotates frame-by-frame inference results (e.g. bounding boxes, label text) and saves a new output.mp4 file after execution.
+* [run_ovtf_classification.sh](run_ovtf_classification.sh): Serves as an entrypoint for the container sample, utilizes a inception v3 model[tensorflow model] running inference python scripts with and without Openvino Integration with Tensorflow.
+* [classification_sample_video_image.py](classification_sample_video_image.py): Demonstrates inference pipeline on input image file, and saves a log file with all the classification labels and probabilities along with ``perfomance.txt`` capturing latency and throughput metrics.
+
 
 ## Runtime Configurations
 | Default Config | Description |
 | --- | --- |
 | ``-e DEVICE=CPU`` | Supports ``GPU`` for running on capable integrated GPU. |
-| ``-e PRECISION=FP16`` | Will support ``FP32`` model precision in upcoming releases. |
-| ``-e INPUT_FILE="resources/Safety_Full_Hat_and_Vest.mp4"`` | Input video file path inside the container | 
+| ``-e INPUT_FILE="./grace_hopper.jpg"`` | Input image file path inside the container | 
 | ``-e RUN_ON_PREM="/mount_folder"`` | Directory to save results to e.g. mount point to retrieve logs, results |
+| ``-e FLAG="openvino/native"`` | flag to enable and disable Openvino Integration with Tensorflow optimizations |
 
 ## Build and run on DevCloud
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 
 ```
-buildah bud --format docker -f ./developer-samples/python/object-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile -t $REGISTRY_URL/object-detection:custom .
+buildah bud --format docker -f ./framework-integration/openvino-dev-latest/openvino-tensorflow/classification/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile -t $REGISTRY_URL/ovtf-classification:custom .
 ```
 
 Push the container to your devcloud private registry:
 ```
-buildah push $REGISTRY_URL/object-detection:custom
+buildah push $REGISTRY_URL/ovtf-classification:custom
 ```
 
-Navigate to **My Library** > **Resources** and associate the ``object-detection:custom`` resource with a project, configure the **Mount Point** with ``/mount_folder`` and launch.
+Navigate to **My Library** > **Resources** and associate the ``ovtf-classification:custom`` resource with a project, configure the **Mount Point** with ``/mount_folder`` and launch.
 
 **NOTE:** 
 * The container playground will ensure GPU access is enabled by default when launching on a device with an integrated GPU. 
