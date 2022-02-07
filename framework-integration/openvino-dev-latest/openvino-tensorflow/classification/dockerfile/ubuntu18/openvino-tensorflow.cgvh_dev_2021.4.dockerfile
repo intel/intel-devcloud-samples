@@ -1,4 +1,4 @@
-FROM docker.io/openvino/ubuntu18_runtime:2021.4.1
+FROM docker.io/openvino/ubuntu18_runtime:2021.4.2
  
 USER root
 
@@ -8,7 +8,9 @@ RUN chmod 0777 /classification-ovtf
 RUN chgrp -R 0 /classification-ovtf && \
     chmod -R g=u /classification-ovtf
 
-RUN apt update && apt -y install wget gcc-8 unzip libssl1.0.0 software-properties-common && add-apt-repository ppa:ubuntu-toolchain-r/test && apt update && apt -y install --only-upgrade libstdc++6
+RUN apt update && apt -y install python3.8 python3-opencv wget git gcc-8 unzip libssl1.0.0 software-properties-common && add-apt-repository ppa:ubuntu-toolchain-r/test && apt update && apt -y install --only-upgrade libstdc++6
+RUN rm /usr/bin/python3 && ln -s /usr/bin/python3.8 /usr/bin/python3
+RUN wget https://bootstrap.pypa.io/get-pip.py && python3.8 get-pip.py
 
 RUN ls
 RUN pwd
@@ -64,8 +66,8 @@ RUN curl -L "https://storage.googleapis.com/download.tensorflow.org/models/incep
 RUN chmod 777 /classification-ovtf/data/*
 RUN chmod -R 777 /classification-ovtf
 
-RUN pip3 install  pillow https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.0.1/tensorflow_abi1-2.5.1-cp36-cp36m-manylinux2010_x86_64.whl
-RUN pip3 install ./data/openvino_tensorflow-1.0.1-cp36-cp36m-manylinux2014_x86_64.whl
+RUN pip3 install https://github.com/openvinotoolkit/openvino_tensorflow/releases/download/v1.1.0/tensorflow_abi1-2.7.0-cp38-cp38-manylinux2010_x86_64.whl
+RUN pip3 install ./data/openvino_tensorflow-1.1.0-cp38-cp38-manylinux2014_x86_64.whl matplotlib tensorflow-hub scipy pillow
 
 ENTRYPOINT /bin/bash -c "source run_ovtf_classification.sh"
 
