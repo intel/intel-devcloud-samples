@@ -1,8 +1,9 @@
 # Opnvino Integration with Tensorflow Classification
-Use an optimized and pre-trained MobileNet-SSD neural network to detect vehicles in a pre-recorded video clip. 
+Use an optimized and pre-trained inception v3 neural network to classify images. 
+ 
 
 ## How It Works
-The sample converts a **mobilenet-ssd** caffe model for optimized inference and feeds a video frame-by-frame to the OpenVINO Inference Engine. The identified results i.e. detected vehicles are stored to a text file which are used later to annotate all the frames of the original video.
+The sample uses tensorflow APIs and runs inferecne using OpenVINO Inference Engine as backend. The identified results i.e. classification labels are stored a text file 
 
 * [openvino_cgvh_dev_2021.4.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile): Utilizes [openvino/ubuntu18_runtime](https://hub.docker.com/r/openvino/ubuntu18_runtime) as the base image and defines configurable runtime environment variables.
 * [convert_yolov4.sh](convert_yolov4.sh): This script is used to generate a tensorflow yolo V4 model

@@ -1,8 +1,8 @@
 # # Opnvino Integration with Tensorflow Object Detection
-Use an optimized and pre-trained MobileNet-SSD neural network to detect vehicles in a pre-recorded video clip. 
+Use an optimized and pre-trained yolov4 neural network to detect objects in a image file. 
 
 ## How It Works
-The sample converts a **mobilenet-ssd** caffe model for optimized inference and feeds a video frame-by-frame to the OpenVINO Inference Engine. The identified results i.e. detected vehicles are stored to a text file which are used later to annotate all the frames of the original video.
+The sample uses tensorflow APIs and runs inferecne using OpenVINO Inference Engine as backend. The identified results i.e. detected objects are stored to a image file 
 
 * [openvino_cgvh_dev_2021.4.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile): Utilizes [openvino/ubuntu18_runtime](https://hub.docker.com/r/openvino/ubuntu18_runtime) as the base image and defines configurable runtime environment variables.
 * [run_ovtf_classification.sh](run_ovtf_classification.sh): Serves as an entrypoint for the container sample, utilizes a inception v3 model[tensorflow model] running inference python scripts with and without Openvino Integration with Tensorflow.
