@@ -41,12 +41,12 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 ## Build and run on local system
 Navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-docker build -f ./developer-samples/python/object-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile -t object-detection:custom .
+docker build -f ./framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile -t ovtf-object-detection:custom .
 ```
 
 Run the container locally by mounting a local directory to retrieve the results:
 ```
-docker run --rm -it -e RUN_ON_PREM=/mount_folder -v {PATH-TO-HOST-DIR}:/mount_folder object-detection:custom
+docker run --rm -it -e RUN_ON_PREM=/mount_folder -v {PATH-TO-HOST-DIR}:/mount_folder ovtf-object-detection:custom
 ```
 **NOTE:** 
 * To enable GPU access, use runtime sample config by passing ``-e DEVICE=GPU``
