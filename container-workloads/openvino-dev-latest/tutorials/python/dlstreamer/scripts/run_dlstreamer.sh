@@ -1,1 +1,1 @@
-sudo docker run -it quay.io/devcloud/dlstreamer:2021.4_latest
+sudo docker run -it dlstreamer:2021.4.2:latest

@@ -1,2 +1,2 @@
-sudo docker build -t quay.io/devcloud/dlstreamer:2021.4_latest -f ./tutorials/python/dlstreamer/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile  .
+sudo docker build -t dlstreamer_2021.4.2 -f ./tutorials/python/dlstreamer/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile  .
 

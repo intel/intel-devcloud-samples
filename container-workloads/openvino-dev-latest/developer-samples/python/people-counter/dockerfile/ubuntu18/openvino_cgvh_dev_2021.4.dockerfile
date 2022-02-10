@@ -1,4 +1,5 @@
-FROM quay.io/devcloud/devcloud-openvino-data-dev:2021.4_latest
+#Building openvino base image from public source
+FROM openvino/ubuntu18_data_dev:2021.4.2
 
 RUN echo "OpenVINO installation done  ......."
 RUN echo "Intel devcloud Sample containerization begin ......."
@@ -20,7 +21,7 @@ ENV DEVICE=$DEVICE
 ARG PRECISION="FP16"
 ENV PRECISION="$PRECISION"
 
-ARG OPENVINO_VERSION="2021.4.582"
+ARG OPENVINO_VERSION="2021.4.752"
 ENV OPENVINO_VERSION=$OPENVINO_VERSION
 
 ARG OUTPUT_FOLDER="output_people_counter_latest"
@@ -38,7 +39,7 @@ ENV RUN_ON_PREM=$RUN_ON_PREM
 ARG INPUT_FILE="resources/Pedestrain_Detect_2_1_1.mp4"
 ENV INPUT_FILE=$INPUT_FILE
 
-RUN source  ${INTEL_OPENVINO_DIR}/bin/setupvars.sh
+RUN ["/bin/bash", "-c", "source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh"]
 RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing object detection app using OpenVINO ......."
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/people-counter
