@@ -211,23 +211,17 @@ pipeline {
                 cp ./framework-integration/openvino-dev-latest/openvino-tensorflow/classification/scripts/build_ovtf_classification.sh .
                 chmod +x build_ovtf_classification.sh
                 ./build_ovtf_classification.sh
-
                 docker tag ovtf-classification_2021.4.2:latest ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.2
-
                 '''
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.2
-
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-
                 docker push ${REGISTRY}/devcloud-samples/ovtf-classification:2021.4.2
-
                 '''
             }
         }
@@ -241,25 +235,19 @@ pipeline {
                 cp ./framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection/scripts/build_ovtf_object_detection.sh .
                 chmod +x build_ovtf_object_detection.sh
                 ./build_ovtf_object_detection.sh
-
                 docker tag ovtf-object-detection_2021.4.2:latest ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.2
-
                 '''
                 sh'''#!/bin/bash
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-
                 ./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.2
-
                 '''
                 sh'''#!/bin/bash
                 set -x
                 docker login https://${REGISTRY} -u devcloud-deployer -p ${SA_TOKEN}
-
                 docker push ${REGISTRY}/devcloud-samples/ovtf-object-detection:2021.4.2
-
                 '''
             }
         }
     }
-
+}
