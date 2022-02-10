@@ -32,42 +32,13 @@ import tensorflow as tf
 import openvino_tensorflow as ovtf
 import time
 import cv2
-
 from PIL import Image, ImageFont, ImageDraw
 
-
-def load_graph(model_file):
-    graph = tf.Graph()
-    graph_def = tf.compat.v1.GraphDef()
-    assert os.path.exists(model_file), "Could not find model path"
-    with open(model_file, "rb") as f:
-        graph_def.ParseFromString(f.read())
-    with graph.as_default():
-        tf.import_graph_def(graph_def)
-
-    return graph
-
-
-def letter_box_image(image_path, input_height, input_width,
-                     fill_value) -> np.ndarray:
-    image = Image.open(image_path)
-    height_ratio = float(input_height) / image.size[1]
-    width_ratio = float(input_width) / image.size[0]
-    fit_ratio = min(width_ratio, height_ratio)
-    fit_height = int(image.size[1] * fit_ratio)
-    fit_width = int(image.size[0] * fit_ratio)
-    fit_image = np.asarray(
-        image.resize((fit_width, fit_height), resample=Image.BILINEAR))
-
-    fill_value = np.full(fit_image.shape[2], fill_value, fit_image.dtype)
-    to_return = np.tile(fill_value, (input_height, input_width, 1))
-    pad_top = int(0.5 * (input_height - fit_height))
-    pad_left = int(0.5 * (input_width - fit_width))
-    to_return[pad_top:pad_top + fit_height, pad_left:pad_left +
-              fit_width] = fit_image
-
-    return to_return, image
-
+import sys
+sys.path.append("../")
+from common.utils import get_input_mode, get_colors, draw_boxes, get_anchors, rename_file
+from common.pre_process import preprocess_image_yolov3 as preprocess_image
+from common.post_process import yolo3_postprocess_np
 
 def load_coco_names(file_name):
     names = {}
@@ -77,255 +48,191 @@ def load_coco_names(file_name):
             names[coco_id] = name
     return names
 
+def load_labels(label_file):
+    label = []
+    proto_as_ascii_lines = tf.io.gfile.GFile(label_file).readlines()
+    for l in proto_as_ascii_lines:
+        label.append(l.rstrip())
+    return label
 
-def letter_box_pos_to_original_pos(letter_pos, current_size,
-                                   ori_image_size) -> np.ndarray:
-    letter_pos = np.asarray(letter_pos, dtype=np.float)
-    current_size = np.asarray(current_size, dtype=np.float)
-    ori_image_size = np.asarray(ori_image_size, dtype=np.float)
-    final_ratio = min(current_size[0] / ori_image_size[0],
-                      current_size[1] / ori_image_size[1])
-    pad = 0.5 * (current_size - final_ratio * ori_image_size)
-    pad = pad.astype(np.int32)
-    to_return_pos = (letter_pos - pad) / final_ratio
-    return to_return_pos
+def run_detect(model, label_file, input_file, input_height, input_width,filename, backend_name, output_filename, flag_enable):
+    # Load model and process input image
+    model = tf.saved_model.load(model_file)
 
-
-def convert_to_original_size(box, size, original_size, is_letter_box_image):
-    if is_letter_box_image:
-        box = box.reshape(2, 2)
-        box[0, :] = letter_box_pos_to_original_pos(box[0, :], size,
-                                                   original_size)
-        box[1, :] = letter_box_pos_to_original_pos(box[1, :], size,
-                                                   original_size)
-    else:
-        ratio = original_size / size
-        box = box.reshape(2, 2) * ratio
-    return list(box.reshape(-1))
-
-
-def draw_boxes(boxes, img, cls_names, detection_size, is_letter_box_image):
-    draw = ImageDraw.Draw(img)
-    for cls, bboxs in boxes.items():
-        color = (256, 256, 256)
-        for box, score in bboxs:
-            box = convert_to_original_size(box, np.array(detection_size),
-                                           np.array(img.size),
-                                           is_letter_box_image)
-            draw.rectangle(box, outline=color)
-            draw.text(
-                box[:2],
-                '{} {:.2f}%'.format(cls_names[cls], score * 100),
-                fill=color)
-
-    # converting PIL image back to OpenCV format
-    im_np = np.asarray(img)
-    im_np = cv2.cvtColor(im_np, cv2.COLOR_RGB2BGR)
-    return im_np
-
-
-def iou(box1, box2):
-    b1_x0, b1_y0, b1_x1, b1_y1 = box1
-    b2_x0, b2_y0, b2_x1, b2_y1 = box2
-
-    int_x0 = max(b1_x0, b2_x0)
-    int_y0 = max(b1_y0, b2_y0)
-    int_x1 = min(b1_x1, b2_x1)
-    int_y1 = min(b1_y1, b2_y1)
-
-    int_area = (int_x1 - int_x0) * (int_y1 - int_y0)
-
-    b1_area = (b1_x1 - b1_x0) * (b1_y1 - b1_y0)
-    b2_area = (b2_x1 - b2_x0) * (b2_y1 - b2_y0)
-
-    iou = int_area / (b1_area + b2_area - int_area + 1e-05)
-
-    return iou
-
-
-def non_max_suppression(predictions_with_boxes,
-                        confidence_threshold,
-                        iou_threshold=0.4):
-    conf_mask = np.expand_dims(
-        (predictions_with_boxes[:, :, 4] > confidence_threshold), -1)
-    predictions = predictions_with_boxes * conf_mask
-
-    result = {}
-    for i, image_pred in enumerate(predictions):
-        shape = image_pred.shape
-        non_zero_idxs = np.nonzero(image_pred)
-        image_pred = image_pred[non_zero_idxs]
-        image_pred = image_pred.reshape(-1, shape[-1])
-
-        bbox_attrs = image_pred[:, :5]
-        classes = image_pred[:, 5:]
-        classes = np.argmax(classes, axis=-1)
-
-        unique_classes = list(set(classes.reshape(-1)))
-
-        for cls in unique_classes:
-            cls_mask = classes == cls
-            cls_boxes = bbox_attrs[np.nonzero(cls_mask)]
-            cls_boxes = cls_boxes[cls_boxes[:, -1].argsort()[::-1]]
-            cls_scores = cls_boxes[:, -1]
-            cls_boxes = cls_boxes[:, :-1]
-
-            while len(cls_boxes) > 0:
-                box = cls_boxes[0]
-                score = cls_scores[0]
-                if cls not in result:
-                    result[cls] = []
-                result[cls].append((box, score))
-                cls_boxes = cls_boxes[1:]
-                # iou threshold check for overlapping boxes
-                ious = np.array([iou(box, x) for x in cls_boxes])
-                iou_mask = ious < iou_threshold
-                cls_boxes = cls_boxes[np.nonzero(iou_mask)]
-                cls_scores = cls_scores[np.nonzero(iou_mask)]
-
-    return result
-def run_video_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std,filename, backend_name,output_filename):
+    # Load the labels
     if label_file:
         classes = load_coco_names(label_file)
-    cap = cv2.VideoCapture(input_file)
-    video_writer = cv2.VideoWriter()
+    anchors = get_anchors(anchor_file)
 
-    output_resolution = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT )))
-    
-    if output_dir:
-        output_filename = output_dir+"/"+backend_name+"_"+output_filename
+    if not args.disable_ovtf:
+        # Print list of available backends
+        print('Available Backends:')
+        backends_list = ovtf.list_backends()
+        for backend in backends_list:
+            print(backend)
+        ovtf.set_backend(backend_name)
     else:
-        output_filename = backend_name+"_"+output_filename
-    video_writer.open(output_filename, cv2.VideoWriter_fourcc(*'avc1'), 20.0, output_resolution)
-    frame_count = 0
-    curr_fps = 0
-    config = tf.compat.v1.ConfigProto()
-    with tf.compat.v1.Session(graph=graph, config=config) as sess:
-         while cap.isOpened():
-            ret, frame = cap.read()
-            if ret is True:
-                # pre-processing steps
-                img = frame
-                #img_resized = cv2.resize(frame, (input_height, input_width))
-                # Run
-                frameID = cap.get(cv2.CAP_PROP_POS_FRAMES)
+        ovtf.disable()
 
-                start = time.time()
-                if(backend_name == "VAD-M"):
-                    xlist = []
-                    for i in range(1, 9):
-                        img_resized = cv2.resize(frame, (input_height, input_width))
-                        xlist.append(img_resized)
-                    x = np.stack(xlist)
+    cap = None
+    video_writer = None
+    images = []
+    if label_file:
+        labels = load_labels(label_file)
+    colors = get_colors(labels)
+    input_mode = get_input_mode(input_file)
+    if input_mode == "video":
+        cap = cv2.VideoCapture(input_file)
+        video_writer = cv2.VideoWriter()
+        output_resolution = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT )))
+        output_filename = "/mount_folder/"+flag_enable+output_filename
+        print(output_filename)
+        video_writer.open(output_filename, cv2.VideoWriter_fourcc(*'avc1'), 20.0, output_resolution)
+    elif input_mode == 'image':
+        images = [input_file]
+    elif input_mode == 'directory':
+        if not os.path.isdir(input_file):
+            raise AssertionError("Path doesn't exist {0}".format(input_file))
+        images = [os.path.join(input_file, i) for i in os.listdir(input_file)]
+        result_dir = os.path.join(input_file, '../detections')
+        if not os.path.exists(result_dir):
+            os.mkdir(result_dir)
+    else:
+        raise Exception(
+            "Invalid input. Path to an image or video or directory of images. Use 0 for using camera as input."
+        )
+    images_len = len(images)
+    image_id = -1
+    # Run inference
+   
+    while True:
+        image_id += 1
+        if input_mode == 'video':
+            if cap.isOpened():
+                ret, frame = cap.read()
+                if ret is True:
+                    pass
                 else:
-                    x = cv2.resize(frame, (input_height, input_width))
-                    x = [x]
-                detected_boxes = sess.run(
-                    output_operation.outputs[0],
-                    {input_operation.outputs[0]: x})
-                elapsed = time.time() - start
-                fps = 1 / elapsed
-                curr_fps += fps
-                frame_count += 1
-                # post-processing - apply non max suppression, draw boxes and save updated image
-                filtered_boxes = non_max_suppression(
-                    detected_boxes, conf_threshold, iou_threshold)
-
-                # OpenCV frame to PIL format conversions as the draw_box function uses PIL
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                im_pil = Image.fromarray(img)
-
-                # modified draw_boxes function to return an openCV formatted image
-                img_bbox = draw_boxes(filtered_boxes, im_pil, classes,
-                                      (input_width, input_height), True)
-
-                # draw information overlay onto the frames
-                cv2.putText(img_bbox,
-                            'Inference Running on : {0}'.format(backend_name),
-                            (30, 50), font, font_size, color, font_thickness)
-                cv2.putText(
-                    img_bbox, 'FPS : {0} | Inference Time : {1}ms'.format(
-                        int(fps), round((elapsed * 1000), 2)), (30, 80), font,
-                    font_size, color, font_thickness)
-                #cv2.imshow("detections", img_bbox)
-                video_writer.write(img_bbox)
-                if cv2.waitKey(1) & 0XFF == ord('q'):
+                    result_file_name = "/mount_folder/" +"performance.txt"
+                    if(flag_enable == "openvino"):
+                        f = open(result_file_name, "w")
+                        f.write('Openvino Integration with Tensorflow \n')       
+                    else:
+                        f = open(result_file_name, "a")
+                        f.write('\n Stock Tensorflow \n')
+                    assert os.path.isdir("/mount_folder"), "Could not find mount folder"
+                    f = open(result_file_name, "a")
+                    fps = 1/elapsed
+                    if(backend_name == "VAD-M"):
+                        fps = 8*fps    
+                    #print('Inference time in ms: %f' % float(1000/fps))
+                    f.write(str(fps))
+                    f.close()
                     break
             else:
-                avg_fps = float(curr_fps/frame_count)
-                
-              
-                print("Completed")
-
-               # f = open(result_file_name, "w")
-                if(backend_name == "VAD-M"):
-                    avg_fps = 8*avg_fps
-                    #print(avg_fps)
-                print("Inference Time: ms",float(1000/avg_fps))
-               
                 break
-    video_writer.release()
-    cap.release()
-    cv2.destroyAllWindows()
-
-def run_image_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename, flag_enable):
-    img_resized, img = letter_box_image(input_file, input_height, input_width,
-                                        128)
-    img_resized = img_resized.astype(np.float32)
-    if label_file:
-        labels = load_coco_names(label_file)
-    config = tf.compat.v1.ConfigProto()
-    with tf.compat.v1.Session(graph=graph, config=config) as sess:
+        if input_mode in ['image', 'directory']:
+            if image_id < images_len:
+                frame = cv2.imread(images[image_id])
+            else:
+                break
+        img = frame
+        image = Image.fromarray(img)
+        
+        if(backend_name == "VAD-M"):
+            xlist = []
+            for i in range(1, 9):
+                x = tf.convert_to_tensor(preprocess_image(image, (input_height, input_width)))
+                xlist.append(x)
+            img_resized = np.stack(xlist)
+            img_resized = tf.squeeze(img_resized,1)
+        else:
+            img_resized = tf.convert_to_tensor(preprocess_image(image, (input_height, input_width)))
+        
+        print(img_resized.shape)
         # Warmup
-        detected_boxes = sess.run(output_operation.outputs[0],
-                                  {input_operation.outputs[0]: [img_resized]})
-        # Run
-        import time
-        start = time.time()
-        detected_boxes = sess.run(output_operation.outputs[0],
-                                  {input_operation.outputs[0]: [img_resized]})
-        elapsed = time.time() - start
-        print('Inference time in ms: %f' % (elapsed * 1000))
+        if image_id == 0:
+            detected_boxes = model(img_resized)
 
+        # Run
+        start = time.time()
+        detected_boxes = model(img_resized)
+        elapsed = time.time() - start
+        fps = 1 / elapsed
+        print('Inference time in ms: %.2f' % (elapsed * 1000))
         result_file_name = "/mount_folder/" +"performance.txt"
+
         if(flag_enable == "openvino"):
             f = open(result_file_name, "w")
             f.write('Openvino Integration with Tensorflow \n')       
         else:
             f = open(result_file_name, "a")
             f.write('Stock Tensorflow \n')
-         
-       
-       # assert os.path.isdir("results"), "Could not find results folder"
-        #f = open(result_file_name, "w")
-        fps = 1/elapsed
-        f.write('Throughput: {:.3g} FPS \n'.format(fps))
-        f.write('Latency: {:.3f} ms\n'.format(elapsed*1000))
+        f = open(result_file_name, "a")
+        f.write(str(fps))
         f.close()
-    # apply non max suppresion, draw boxes and save updated image
-    filtered_boxes = non_max_suppression(detected_boxes, conf_threshold,
-                                         iou_threshold)
-    draw_boxes(filtered_boxes, img, labels, (input_width, input_height), True)
-    if output_dir:
-        img.save(os.path.join(output_dir, output_filename))
-    else:
-        img.save(output_filename)
+             
+        # post-processing
+        image_shape = tuple((frame.shape[0], frame.shape[1]))
+        out_boxes, out_classes, out_scores = yolo3_postprocess_np(
+            detected_boxes,
+            image_shape,
+            anchors,
+            len(labels), (input_height, input_width),
+            max_boxes=10,
+            confidence=conf_threshold,
+            iou_threshold=iou_threshold,
+            elim_grid_sense=True)
+        # modified draw_boxes function to return an openCV formatted image
+        img_bbox = draw_boxes(img, out_boxes, out_classes, out_scores, labels,
+                              colors)
+        # draw information overlay onto the frames
+        cv2.putText(img_bbox, 'Inference Running on : {0}'.format(backend_name),
+                    (30, 50), font, font_size, color, font_thickness)
+        cv2.putText(
+            img_bbox, 'FPS : {0} | Inference Time : {1}ms'.format(
+                int(fps), round((elapsed * 1000), 2)), (30, 80), font,
+            font_size, color, font_thickness)
+        if input_mode in 'directory':
+            out_file = "detections_{0}.jpg".format(image_id)
+            out_file = os.path.join(result_dir, out_file)
+            cv2.imwrite(out_file, img_bbox)
+        if input_mode in 'image':
+            filename = "/mount_folder/"+flag_enable+"detections.jpg"
+            cv2.imwrite(filename , img_bbox)
+            print("Output image is saved in detections.jpg")
+        if not args.no_show:
+            #cv2.imshow("detections", img_bbox)
+            if cv2.waitKey(1) & 0XFF == ord('q'):
+                break
+        if args.rename:
+            rename_file(images[image_id], out_classes, labels)
+        if input_mode == 'video':
+            video_writer.write(img_bbox)
+    if input_mode in 'directory':
+        print("Output images is saved in {0}".format(
+            os.path.abspath(result_dir)))
+    
 
+    if cap:
+        cap.release()
+    if video_writer:
+        video_writer.release()
+    cv2.destroyAllWindows()
+    
 if __name__ == "__main__":
-    input_file = "../data/images/grace_hopper.jpg"
-    model_file = "frozen_darknet_yolov3_model.pb"
-    label_file = "../data/coco.names"
+    input_file = "./grace_hopper.jpg"
+    model_file = "./data/yolo_v4"
+    label_file = "./coco.names"
+    anchor_file = "./yolov4_anchors.txt"
     input_height = 160
     input_width = 160
-    input_mean = 0
-    input_std = 255
-    input_layer = "inputs"
-    output_layer = "output_boxes"
     backend_name = "CPU"
     output_dir = "."
     conf_threshold = 0.6
     iou_threshold = 0.5
     output_filename = "output.mp4"
+    
     # overlay parameters
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_size = .6
@@ -333,46 +240,56 @@ if __name__ == "__main__":
     font_thickness = 2
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m","--graph", help="graph/model to be executed")
-    parser.add_argument("-i","--input_layer", help="name of input layer")
-    parser.add_argument("-o","--output_layer", help="name of output layer")
-    parser.add_argument("-l","--labels", help="name of file containing labels")
     parser.add_argument(
-        "-ip","--input",
-        help="input (0 - for camera / absolute video file path) to be processed"
+        "--model", help="Optional. Path to model to be executed.")
+    parser.add_argument(
+        "--labels", help="Optional. Path to labels mapping file.")    
+    parser.add_argument(
+        "--input",
+        help=
+        "Optional. The input to be processed. Path to an image or video or directory of images. Use 0 for using camera as input."
     )
-    parser.add_argument("-ih","--input_height", type=int, help="input height")
-    parser.add_argument("-iw","--input_width", type=int, help="input width")
-    parser.add_argument("-im","--input_mean", type=int, help="input mean")
-    parser.add_argument("-is","--input_std", type=int, help="input std")
-    parser.add_argument("-d","--backend", help="name of backend. Default is CPU")
+    parser.add_argument(
+        "--input_height",
+        type=int,
+        help="Optional. Specify input height value.")
+    parser.add_argument(
+        "--rename",
+        help=
+        "Optional. The input image or the directory of the images will be renamed",
+        action='store_true')
+    parser.add_argument(
+        "--input_width", type=int, help="Optional. Specify input width value.")
+    parser.add_argument(
+        "--backend",
+        help="Optional. Specify the target device to infer on; "
+        "CPU, GPU, MYRIAD, or VAD-M is acceptable. Default value is CPU.")
+    parser.add_argument(
+        "--no_show", help="Optional. Don't show output.", action='store_true')
+    parser.add_argument(
+        "--conf_threshold",
+        type=float,
+        help="Optional. Specify confidence threshold. Default is 0.6.")
+    parser.add_argument(
+        "--iou_threshold",
+        type=float,
+        help="Optional. Specify iou threshold. Default is 0.5.")
+    parser.add_argument(
+        "--disable_ovtf",
+        help="Optional."
+        "Disable openvino_tensorflow pass and run on stock TF.",
+        action='store_true')
+
     parser.add_argument(
         "--output_dir",
         help="Directory that stores updated image."
         " Default is directory from where this sample is launched.")
-    parser.add_argument(
-        "--conf_threshold",
-        type=float,
-        help="confidence threshold. Default is 0.6")
-    parser.add_argument(
-        "--iou_threshold", type=float, help="iou threshold. Default is 0.5")
     parser.add_argument("-f","--flag", help="disable backend")
-    parser.add_argument("-it",
-    "--input_type",
-        help="input type either video or image"
-    )
     parser.add_argument("-of","--output_filename", help="outputfilename for output detections video")
     args = parser.parse_args()
-    if args.graph:
-        model_file = args.graph
-        if not args.input_layer:
-            raise Exception("Specify input layer for this network")
-        else:
-            input_layer = args.input_layer
-        if not args.output_layer:
-            raise Exception("Specify output layer for this network")
-        else:
-            output_layer = args.output_layer
+    
+    if args.model:
+        model_file = args.model
         if args.labels:
             label_file = args.labels
         else:
@@ -383,33 +300,34 @@ if __name__ == "__main__":
         input_height = args.input_height
     if args.input_width:
         input_width = args.input_width
-    if args.input_mean:
-        input_mean = args.input_mean
-    if args.input_std:
-        input_std = args.input_std
     if args.backend:
         backend_name = args.backend
-    if args.output_dir:
-        output_dir = args.output_dir
     if args.conf_threshold:
         conf_threshold = args.conf_threshold
     if args.iou_threshold:
         iou_threshold = args.iou_threshold
-    if not label_file:
-            raise Exception("Specify label map file")
+    if args.rename:
+        print(40 * '-')
+        print(
+            "--rename argument is enabled, this will rename the input image or directory of images in your disk.\n Press 'y' to continue.\n Press 'a' to abort.\n Press any other key to proceed without renaming."
+        )
+        print(40 * '-')
+        val = input()
+        if val == 'y':
+            print(" Renaming has been enabled")
+        elif val == 'a':
+            print("Aborted")
+            exit(0)
+        else:
+            print("Renaming has been disabled")
+            args.rename = False
+
+    
     if args.output_filename:
         output_filename = args.output_filename
-    # Load graph and process input image
-    graph = load_graph(model_file)
-    # Load the labels
-    if label_file:
-        labels = load_coco_names(label_file)
-    input_name = "import/" + input_layer
-    output_name = "import/" + output_layer
-    input_operation = graph.get_operation_by_name(input_name)
-    output_operation = graph.get_operation_by_name(output_name)
+    if args.output_dir:
+        output_dir = args.output_dir
     flag_enable = args.flag
-    flag_input = args.input_type
     filename = ""
     # Print list of available backends
     if(flag_enable == "native"):
@@ -433,11 +351,4 @@ if __name__ == "__main__":
     else:
         raise AssertionError("flag_enable string not supported")
     
-    assert os.path.exists(input_file), "Could not find video file path"
-    if(flag_input == "video"):
-        run_video_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename)
-    elif(flag_input == "image"):
-        run_image_detect(model_file, input_layer, output_layer,label_file,input_file,input_height,input_width, input_mean,input_std, filename, backend_name, output_filename, flag_enable)
-    else:
-        raise AssertionError("flag input type string not supported")
-    
+    run_detect(model_file, label_file,input_file,input_height,input_width, filename, backend_name, output_filename, flag_enable)   

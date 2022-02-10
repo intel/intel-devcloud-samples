@@ -18,13 +18,16 @@ echo "Using Openvino Integration with Tensorflow"
 
 export FLAG="openvino"
 
-python3 classification_sample_video_image.py -m $MODEL -i $INPUT_LAYER -o $OUTPUT_LAYER -ip $INPUT_FILE -l $LABELS -it $INPUT_TYPE -d $DEVICE -f $FLAG
+
+python3 classification_sample_video_image.py -f $FLAG | tee /mount_folder/result_ovtf.txt
+
 
 echo "Using Stock Tensorflow"
 
 export FLAG="native"
 
-python3 classification_sample_video_image.py -m $MODEL -i $INPUT_LAYER -o $OUTPUT_LAYER -ip $INPUT_FILE -l $LABELS -it $INPUT_TYPE -d $DEVICE -f $FLAG
+python3 classification_sample_video_image.py -f $FLAG | tee -a  /mount_folder/result_tf.txt
 
-sleep 5
+
+sleep 10
 
