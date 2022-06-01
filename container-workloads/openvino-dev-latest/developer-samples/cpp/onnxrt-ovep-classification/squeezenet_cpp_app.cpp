@@ -21,6 +21,8 @@ Portions of this software are copyright of their respective authors and released
 #include <string>
 #include <vector>
 #include <stdexcept> // To use runtime_error
+#include <iomanip> // put_time
+#include <sstream> // stringstream
 
 template <typename T>
 T vectorProduct(const std::vector<T>& v)
@@ -159,7 +161,12 @@ int main(int argc, char* argv[])
         useOPENVINO = false;
     }
     std::ofstream logs;
-    logs.open(outputPath +"/performance.txt");
+    // Adding timestamp to the output file
+    auto timestr = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(timestr);
+    std::stringstream datetime;
+    datetime << std::put_time(std::localtime(&in_time_t), "%Y%m%d_%X");
+    logs.open(outputPath + "/performance_"+ datetime.str() +".txt");
     if (useOPENVINO)
     {
         std::cout << "Inference Execution Provider: OPENVINO" << std::endl;

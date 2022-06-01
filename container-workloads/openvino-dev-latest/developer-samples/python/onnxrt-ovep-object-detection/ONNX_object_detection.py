@@ -138,8 +138,9 @@ if not os.path.exists(output_path):
     else:
         print("Output directory %s was successfully created" % output_path)
 
-
-output_file = "output_results_" + device + ".mp4"
+# Adding timestamp to the output file
+timestr = time.strftime("%Y%m%d_%H%M%S")
+output_file = "output_results_" + device + "_" + timestr + ".mp4"
 output_path_file = output_path + "/" + output_file
 
 if not os.path.exists(output_path_file):
@@ -160,7 +161,7 @@ graph_optimization_level = rt.GraphOptimizationLevel.ORT_DISABLE_ALL
 
 # create inference session
 print("Device: ", device)
-result_file_name = "/mount_folder/" + "performance.txt"
+result_file_name = "/mount_folder/" + "performance_" + timestr + ".txt"
 
 if device == "CPU":
     sess = rt.InferenceSession(model, providers=["CPUExecutionProvider"])
@@ -235,7 +236,7 @@ while cap.isOpened() and frameCount < video_length - 1:
 
 total_time = time.time() - start
 
-with open(os.path.join(output_path, "performance.txt"), "a") as f:
+with open(os.path.join(output_path, "performance_" + timestr + ".txt"), "a") as f:
     f.write("Total Inference Engine Processing Time in Seconds: {:.3g} \n".format(total_time))
     f.write("FPS(Includes Preprocessing and Postprocessing): {} \n".format(frameCount//total_time))
 

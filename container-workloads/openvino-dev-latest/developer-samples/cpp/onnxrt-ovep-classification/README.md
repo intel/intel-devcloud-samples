@@ -48,7 +48,7 @@ docker run --rm -it --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/
 ```
 **NOTE:** 
 * By defaut the device is CPU_FP32. To enable other device access, use runtime sample config by passing ``-e DEVICE=[device name]``
-* Pass ``-e EXECUTION_PROVIDER="--use_cpu"`` and ``-e DEVICE=CPU`` for executing the inference on CPU EP. By default it is using OpenVINO EP.
+* Pass ``-e EXECUTION_PROVIDER=--use_cpu`` and ``-e DEVICE=CPU`` for executing the inference on CPU EP. By default it is using OpenVINO EP.
 * You must also mount the device drivers accordingly, see [openvino/onnxruntime_ep_ubuntu18](https://hub.docker.com/r/openvino/onnxruntime_ep_ubuntu18) for more info.
 
 
