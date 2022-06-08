@@ -16,7 +16,7 @@ The sample uses ONNXRuntime OpenVINO EP for classification. The identified resul
 | ``-v {PATH-TO-HOST-DIR}:/mount_folder`` | PATH-TO-HOST-DIR is the directory to save results. E.g. mount point to retrieve logs, results |
 
 ## Build and run on DevCloud
-Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
+Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), build onnxruntime. [Refer here](https://www.onnxruntime.ai/docs/build/). Please note you need to add the "--build_shared_lib" flag to your build command. Once the build is done create a folder "ort-Libraries" at {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification. Copy libonnxruntime_providers_openvino.so, libonnxruntime_providers_shared.so and libonnxruntime.so.1.11.0 from onnxruntime build folder to framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries. Navigate to `{repo-root}` directory and build image:
 
 ```
 buildah bud --format docker -f ./framework-integration/openvino-dev-latest/onnxrt/classification/dockerfile/ubuntu18/onnxrt_ovep.dockerfile -t $REGISTRY_URL/ovep-classification:custom .
