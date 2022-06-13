@@ -16,7 +16,27 @@ The sample uses ONNXRuntime OpenVINO EP for classification. The identified resul
 | ``-v {PATH-TO-HOST-DIR}:/mount_folder`` | PATH-TO-HOST-DIR is the directory to save results. E.g. mount point to retrieve logs, results |
 
 ## Build and run on DevCloud
-Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), build onnxruntime. [Refer here](https://www.onnxruntime.ai/docs/build/). Please note you need to add the "--build_shared_lib" flag to your build command. Once the build is done create a folder "ort-Libraries" at {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification. Copy libonnxruntime_providers_openvino.so, libonnxruntime_providers_shared.so and libonnxruntime.so.1.11.0 from onnxruntime build folder to framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries. Navigate to `{repo-root}` directory and build image:
+Use the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html). Download the onnxruntime binaries from the [release page](https://github.com/intel/onnxruntime/releases/tag/v4.0).
+```
+wget https://github.com/intel/onnxruntime/releases/download/v4.0/linux_binaries_uep_v4.0.tar.gz
+```
+
+Unzip the tar file
+```
+tar -xzf linux_binaries_uep_v4.0.tar.gz
+```
+
+Create a folder "ort-Libraries" at {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification.
+```
+mkdir {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries
+```
+
+Copy libonnxruntime_providers_openvino.so, libonnxruntime_providers_shared.so and libonnxruntime.so.1.11.0 to {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries.
+```
+cp linux_binaries_uep_v4.0/* {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries
+```
+
+Navigate to `{repo-root}` directory and build image:
 
 ```
 buildah bud --format docker -f ./framework-integration/openvino-dev-latest/onnxrt/classification/dockerfile/ubuntu18/onnxrt_ovep.dockerfile -t $REGISTRY_URL/ovep-classification:custom .
@@ -37,7 +57,28 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 
 
 ## Build and run on local system
-Build onnxruntime. [Refer here](https://www.onnxruntime.ai/docs/build/). Please note you need to add the "--build_shared_lib" flag to your build command. Once the build is done create a folder "ort-Libraries" at framework-integration/openvino-dev-latest/onnxrt/classification. Copy libonnxruntime_providers_openvino.so, libonnxruntime_providers_shared.so and libonnxruntime.so.1.11.0 from onnxruntime build folder to framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries.
+Download the onnxruntime binaries from the [release page](https://github.com/intel/onnxruntime/releases/tag/v4.0).
+```
+wget https://github.com/intel/onnxruntime/releases/download/v4.0/linux_binaries_uep_v4.0.tar.gz
+```
+
+Unzip the tar file
+```
+tar -xzf linux_binaries_uep_v4.0.tar.gz
+```
+
+Create a folder "ort-Libraries" at {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification.
+```
+mkdir {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries
+```
+
+Copy libonnxruntime_providers_openvino.so, libonnxruntime_providers_shared.so and libonnxruntime.so.1.11.0 to {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries.
+```
+cp linux_binaries_uep_v4.0/* {repo-root}/framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries
+```
+
+Navigate to `{repo-root}` directory and build image:
+
 ```
 docker build -t ovep-classification:custom -f framework-integration/openvino-dev-latest/onnxrt/classification/dockerfile/ubuntu18/onnxrt_ovep.dockerfile  .
 ```
