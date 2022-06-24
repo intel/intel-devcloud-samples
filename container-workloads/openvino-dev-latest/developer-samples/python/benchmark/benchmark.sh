@@ -22,9 +22,9 @@ IR_FP32="$XML_IR_FP32/mobilenet-ssd.xml"
 sample_name="benchmark"
 
 MODEL="resnet-50-tf"
-source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh 
+source /opt/intel/openvino_$OPENVINO_VERSION/setupvars.sh 
 mkdir -p $RUN_ON_PREM/models
-python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/model_downloader/downloader.py --name $MODEL  -o $RUN_ON_PREM/models
+omz_downloader  --name $MODEL  -o $RUN_ON_PREM/models
 
 
 if [[ "$PRECISION" == *"$FP16"* ]];
@@ -32,7 +32,7 @@ then
    echo "Creating output folder \$FP16"
    mkdir -p $Output_folder_16
    mkdir -p $XML_IR_FP16
-   python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
+   mo \
    --data_type $FP16 \
    --input_model $RUN_ON_PREM/models/public/resnet-50-tf/resnet_v1-50.pb  \
    --input_shape=[1,224,224,3] \
@@ -40,14 +40,15 @@ then
    --output_dir $XML_IR_FP16 \
 
 
-   python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/benchmark_tool/benchmark_app.py -m $XML_IR_FP16/resnet_v1-50.xml \
+   python3 /opt/intel/openvino_$OPENVINO_VERSION/python/samples/benchmark/benchmark_app.py -m $XML_IR_FP16/resnet_v1-50.xml \
             -d $DEVICE \
             -niter 10 \
             -api $API \
             --report_type detailed_counters \
-            --output_dir $Output_folder_16
+            --report_folder  $Output_folder_16
 
-   cp  /opt/intel/openvino_$OPENVINO_VERSION/python/samples/benchmark/*.csv  $Output_folder_16 
+
+   #cp  /opt/intel/openvino_$OPENVINO_VERSION/python/samples/benchmarkApp_python/*.csv  $Output_folder_16 
 
 fi
 

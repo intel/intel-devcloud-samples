@@ -25,7 +25,11 @@ import logging as log
 import numpy as np
 import io
 from openvino.inference_engine import IECore
+#from qarpo.demoutils import *
 import cv2
+#import applicationMetricWriter
+import ngraph as ng
+#from qarpo.demoutils import progressUpdate
 
 def build_argparser():
     parser = ArgumentParser()
@@ -43,7 +47,7 @@ def build_argparser():
                         type=str,
                         default=None)
     parser.add_argument('-d', '--device',
-                        help='Specify the target device to infer on; CPU, GPU, FPGA, MYRIAD, or HDDL is acceptable.'
+                        help='Specify the target device to infer on; CPU, GPU, MYRIAD, or HDDL is acceptable.'
                              'Demo will look for a suitable plugin for specified device (CPU by default).',
                         default='CPU',
                         type=str)
@@ -73,7 +77,7 @@ def build_argparser():
 
 
 def processBoxes(frame_count, res, labels_map, prob_threshold, initial_w, initial_h, result_file):
-    for obj in res[0][0]:
+    for obj in res:
         dims = ""
         # Draw only objects when probability more than specified threshold
         if obj[2] > prob_threshold:
@@ -82,6 +86,50 @@ def processBoxes(frame_count, res, labels_map, prob_threshold, initial_w, initia
             dims = "{frame_id} {xmin} {ymin} {xmax} {ymax} {class_id} {det_label} {est} {time} \n".format(frame_id=frame_count, xmin=int(obj[3] * initial_w), ymin=int(obj[4] * initial_h), xmax=int(obj[5] * initial_w), ymax=int(obj[6] * initial_h), class_id=class_id, det_label=det_label, est=round(obj[2]*100, 1), time='N/A')
             result_file.write(dims)
 
+class SingleOutputPostprocessor:
+    def __init__(self, output_layer):
+        self.output_layer = output_layer
+
+    def __call__(self, outputs):
+        return outputs[self.output_layer].buffer[0][0]
+
+
+class MultipleOutputPostprocessor:
+    def __init__(self, bboxes_layer='bboxes', scores_layer='scores', labels_layer='labels'):
+        self.bboxes_layer = bboxes_layer
+        self.scores_layer = scores_layer
+        self.labels_layer = labels_layer
+
+    def __call__(self, outputs):
+        bboxes = outputs[self.bboxes_layer].buffer[0]
+        scores = outputs[self.scores_layer].buffer[0]
+        labels = outputs[self.labels_layer].buffer[0]
+        return [[0, label, score, *bbox] for label, score, bbox in zip(labels, scores, bboxes)]
+    
+    
+def get_output_postprocessor(net, bboxes='bboxes', labels='labels', scores='scores'):
+    if len(net.outputs) == 1:
+        output_blob = next(iter(net.outputs))
+        return SingleOutputPostprocessor(output_blob)
+    elif len(net.outputs) >= 3:
+        def find_layer(name, all_outputs):
+            suitable_layers = [layer_name for layer_name in all_outputs if name in layer_name]
+            if not suitable_layers:
+                raise ValueError('Suitable layer for "{}" output is not found'.format(name))
+
+            if len(suitable_layers) > 1:
+                raise ValueError('More than 1 layer matched to "{}" output'.format(name))
+
+            return suitable_layers[0]
+
+        labels_out = find_layer(labels, net.outputs)
+        scores_out = find_layer(scores, net.outputs)
+        bboxes_out = find_layer(bboxes, net.outputs)
+
+        return MultipleOutputPostprocessor(bboxes_out, scores_out, labels_out)
+
+    raise RuntimeError("Unsupported model outputs")
+    
 
 def main():
     log.basicConfig(format="[ %(levelname)s ] %(message)s", level=log.INFO, stream=sys.stdout)
@@ -98,26 +146,31 @@ def main():
 
     # Read IR
     log.info("Reading IR...")
-    log.info("DEVICE:")
-    log.info(args.device)
     net = ie.read_network(model=model_xml, weights=model_bin)
-
+    #Ensure Model's layer's are supported by MKLDNN
     if "CPU" in args.device:
-        supported_layers = ie.query_network(net, "CPU")
-        log.info("CPU here...")
-        #not_supported_layers = [l for l in net.layers.keys() if l not in supported_layers]
-        #if len(not_supported_layers) != 0:
-        #    log.error("Following layers are not supported by the plugin for specified device {}:\n {}".
-        #              format(args.device, ', '.join(not_supported_layers)))
-        #    log.error("Please try to specify cpu extensions library path in sample's command line parameters using -l "
-        #              "or --cpu_extension command line argument")
+        supported_layers = ie.query_network(net, "CPU") 
+        ng_function = ng.function_from_cnn(net)
+        not_supported_layers = \
+                [node.get_friendly_name() for node in ng_function.get_ordered_ops() \
+                if node.get_friendly_name() not in supported_layers]
+        if len(not_supported_layers) != 0:
+            log.error("Following layers are not supported by the plugin for specified device {}:\n {}".
+                      format(args.device, ', '.join(not_supported_layers)))
+            log.error("Please try to specify cpu extensions library path in sample's command line parameters using"
+                      "--cpu_extension command line argument")
             #sys.exit(1)
-    assert len(net.inputs.keys()) == 1, "Sample supports only single input topologies"
-    assert len(net.outputs) == 1, "Sample supports only single output topologies"
-
-    input_blob = next(iter(net.inputs))
-    out_blob = next(iter(net.outputs))
-
+    assert (len(net.input_info.keys()) == 1 or len(net.input_info.keys()) == 2), "Sample supports topologies only with 1 or 2 inputs"
+    for blob_name in net.input_info:
+        if len(net.input_info[blob_name].input_data.shape) == 4:
+            input_blob = blob_name
+        elif len(net.input_info[blob_name].input_data.shape) == 2:
+            img_info_input_blob = blob_name
+        else:
+            raise RuntimeError("Unsupported {}D input layer '{}'. Only 2D and 4D input layers are supported"
+                               .format(len(net.input_info[blob_name].input_data.shape), blob_name))
+    #out_blob = next(iter(net.outputs))
+    output_postprocessor = get_output_postprocessor(net)
     if args.input == 'cam':
         input_stream = 0
     else:
@@ -126,25 +179,17 @@ def main():
 
     log.info("Loading IR to the plugin...")
     exec_net = ie.load_network(network=net, num_requests=args.number_infer_requests, device_name=args.device)
+    # Read and pre-process input image
+    n, c, h, w = net.input_info[input_blob].input_data.shape
  
 
     log.info("Starting preprocessing...")
-
     #job_id = str(os.environ['PBS_JOBID'])
     result_file = open(os.path.join(args.output_dir, f'output.txt'), "w")
-    print("input file created")
     pre_infer_file = os.path.join(args.output_dir, f'pre_progress.txt')
     infer_file = os.path.join(args.output_dir, f'i_progress.txt')
     processed_vid = '/tmp/processed_vid.bin'
-
-    # Read and pre-process input image
-    if isinstance(net.inputs[input_blob], list):
-        n, c, h, w = net.inputs[input_blob]
-    else:
-        n, c, h, w = net.inputs[input_blob].shape
-    del net
-
-
+    
     cap = cv2.VideoCapture(input_stream)
     video_len = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     if video_len < args.number_infer_requests:
@@ -167,7 +212,7 @@ def main():
             f.write(bin_frame)
             id_ += 1
             #if id_%10 == 0: 
-                #progressUpdate(pre_infer_file, time.time()-time_start, id_, video_len) 
+            #    progressUpdate(pre_infer_file, time.time()-time_start, id_, video_len) 
     cap.release()
 
     if args.labels:
@@ -202,7 +247,7 @@ def main():
                     # Parse inference results
                     det_time = time.time() - inf_time
                     #applicationMetricWriter.send_inference_time(det_time*1000)                      
-                    res = infer_requests[previous_inference].outputs[out_blob]
+                    res = output_postprocessor(exec_net.requests[previous_inference].output_blobs)
                     processBoxes(frame_count, res, labels_map, args.prob_threshold, width, height, result_file)
                     frame_count += 1
 
@@ -227,7 +272,6 @@ def main():
             f.write('Throughput: {:.3g} FPS \n'.format(frame_count/total_time))
             f.write('Latency: {:.3f} ms\n'.format(total_time*1000))
 
-
         result_file.close()
     
     
@@ -235,6 +279,7 @@ def main():
         log.info("Processing done...")
         del exec_net
 
+   # applicationMetricWriter.send_application_metrics(model_xml, args.device)
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

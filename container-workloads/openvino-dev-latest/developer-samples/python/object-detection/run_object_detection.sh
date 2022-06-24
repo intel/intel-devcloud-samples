@@ -28,11 +28,10 @@ SCALE_RESOLUTION=0.5  # scale output frame resolution
 
 
 
-source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh
+source /opt/intel/openvino_$OPENVINO_VERSION/setupvars.sh
 
 mkdir -p $RUN_ON_PREM/raw_models/public
 
-#python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/tools/model_downloader/downloader.py  --name $MODEL -o $RUN_ON_PREM/raw_models 
 
 cp -r mobilenet-ssd $RUN_ON_PREM/raw_models/public
 
@@ -41,7 +40,7 @@ then
    echo "Creating output folder \$FP16"
    mkdir -p $Output_folder_16 
    mkdir -p $XML_IR_FP16 
-   python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
+   mo \
    --input_model $RUN_ON_PREM/raw_models/public/mobilenet-ssd/mobilenet-ssd.caffemodel \
    --data_type $FP16 \
    --output_dir $XML_IR_FP16 \
@@ -57,27 +56,4 @@ then
 
 
 fi
-
-if [[ "$PRECISION" == *"$FP32"* ]];
-then
-   echo "Creating output folder \$FP32"
-   mkdir -p $Output_folder_32
-   mkdir -p $XML_IR_FP32
-   python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
-   --input_model $RUN_ON_PREM/raw_models/public/mobilenet-ssd/mobilenet-ssd.caffemodel \
-   --data_type $FP32 \
-   --output_dir $XML_IR_FP32 \
-   --scale 256 \
-   --mean_values [127,127,127]
-
-   python3 $Sample_name  -i $INPUT_FILE  -m  $IR_FP32  --labels labels.txt -o $Output_folder_32 -d $DEVICE -nireq $NUM_REQS
-
-   python3 object_detection_annotate.py -i $INPUT_FILE \
-                                     -o $Output_folder_32 \
-                                     -f $SCALE_FRAME_RATE \
-                                     -s $SCALE_RESOLUTION
-
-fi
-
-
 

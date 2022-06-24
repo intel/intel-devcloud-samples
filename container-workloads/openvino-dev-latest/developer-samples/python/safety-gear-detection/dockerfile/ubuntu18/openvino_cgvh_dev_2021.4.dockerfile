@@ -47,4 +47,4 @@ RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing safety gear detection app using OpenVINO ......."
 
 WORKDIR ${INTEL_OPENVINO_DIR}/python/samples/safety-gear-detection
-ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/safety-gear-detection/run_safety_gear_detection.sh"
+#ENTRYPOINT /bin/bash -c "source ${INTEL_OPENVINO_DIR}/python/samples/safety-gear-detection/run_safety_gear_detection.sh"

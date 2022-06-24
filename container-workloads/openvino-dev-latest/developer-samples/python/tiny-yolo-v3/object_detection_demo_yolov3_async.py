@@ -421,7 +421,7 @@ def main():
     fps = cap.get(cv2.CAP_PROP_FPS)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fourcc = cv2.VideoWriter_fourcc(*'avc1')
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     output_video = cv2.VideoWriter(output_path_file,fourcc, fps, (width,height))
     # ----------------------------------------------- 6. Doing inference -----------------------------------------------

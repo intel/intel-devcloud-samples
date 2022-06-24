@@ -1,2 +1,4 @@
-sudo docker build   -t tiny-yolo-v3_2021.4.2 -f ./developer-samples/python/tiny-yolo-v3/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile  .
+tag=2022.1
+sudo docker build   -t tiny-yolo-v3_$tag -f ./developer-samples/python/tiny-yolo-v3/dockerfile/ubuntu18/openvino_cgvh_dev_$tag.dockerfile  .
+#./developer-samples/python/tiny-yolo-v3/dockerfile/ubuntu18/openvino_cgvh_dev_2022.1.dockerfile
 

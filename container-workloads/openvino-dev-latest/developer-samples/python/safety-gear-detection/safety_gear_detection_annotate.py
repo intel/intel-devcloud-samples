@@ -34,7 +34,7 @@ def placeBoxes(frame, rd):
 
     return frame
 
-def post_process(input_stream, input_data, out_path, progress_data, scale_frame_rate, scale_resolution):
+def post_process(input_stream, input_data, out_path, scale_frame_rate, scale_resolution):
     post_process_time_start = time.time()
     cap = cv2.VideoCapture(input_stream)
     if cap.isOpened():   
@@ -43,7 +43,8 @@ def post_process(input_stream, input_data, out_path, progress_data, scale_frame_
         out_w = int(scale_resolution*width)
         out_h = int(scale_resolution*height)
         #vw = cv2.VideoWriter(out_path, 0x00000021, 50.0 / scale_frame_rate, (out_w, out_h), True)
-        vw = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'avc1'), 50.0 / scale_frame_rate, (out_w, out_h), True)
+        #vw = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'avc1'), 50.0 / scale_frame_rate, (out_w, out_h), True)
+        vw = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'mp4v'), 50.0 / scale_frame_rate, (out_w, out_h), True)
         video_len = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     else:
         print('failed to open input video stream')
@@ -81,7 +82,7 @@ def post_process(input_stream, input_data, out_path, progress_data, scale_frame_
         frame_count += 1
         
         # report progress
-        # progressUpdate(progress_data, int(time.time()-post_process_time_start), frame_count, video_len)
+       # progressUpdate(progress_data, int(time.time()-post_process_time_start), frame_count, video_len)
 
         key = cv2.waitKey(1)
         if key == 27:
@@ -104,6 +105,7 @@ def main():
 
     args = parser.parse_args()
     
+    #job_id = os.environ['PBS_JOBID']
     input_data = f"{args.output_dir}/output.txt"
     progress_data = f"{args.output_dir}/post_progress.txt"
     output_stream = f"{args.output_dir}/output.mp4"
@@ -114,7 +116,7 @@ def main():
     print(f"args.scale_frame_rate={args.scale_frame_rate}")
     print(f"args.scale_resolution={args.scale_resolution}")
 
-    post_process( args.input, input_data, output_stream, progress_data, args.scale_frame_rate, args.scale_resolution )
+    post_process( args.input, input_data, output_stream, args.scale_frame_rate, args.scale_resolution )
 
 if __name__ == '__main__':
     main()

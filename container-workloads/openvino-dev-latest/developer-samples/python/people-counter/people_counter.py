@@ -166,7 +166,7 @@ def main():
     prob_threshold = args.prob_threshold
     initial_w = cap.get(3)
     initial_h = cap.get(4)
-    people_counter = cv2.VideoWriter(os.path.join(args.output_dir, f"output.mp4"), cv2.VideoWriter_fourcc(*"avc1"), fps, (int(initial_w), int(initial_h)), True)
+    people_counter = cv2.VideoWriter(os.path.join(args.output_dir, f"output.mp4"), cv2.VideoWriter_fourcc(*"mp4v"), fps, (int(initial_w), int(initial_h)), True)
     while True:
         if frame_count < video_len:
             flag, frame = cap.read()

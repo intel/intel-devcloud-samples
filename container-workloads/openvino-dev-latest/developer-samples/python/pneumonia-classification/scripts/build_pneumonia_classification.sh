@@ -1,1 +1,2 @@
-sudo docker build -t pneumonia_classification_2021.4.2:latest -f ./developer-samples/python/pneumonia-classification/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile  .
+tag=2022.1
+sudo docker build -t pneumonia_classification_$tag:latest -f ./developer-samples/python/pneumonia-classification/dockerfile/ubuntu18/openvino_cgvh_dev_$tag.dockerfile  .

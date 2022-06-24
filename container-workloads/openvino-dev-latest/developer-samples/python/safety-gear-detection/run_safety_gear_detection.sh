@@ -23,7 +23,7 @@ SCALE_FRAME_RATE=1    # scale number or output frames to input frames
 SCALE_RESOLUTION=0.5  # scale output frame resolution
 
 
-source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh
+#source /opt/intel/openvino_$OPENVINO_VERSION/setupvars.sh
 
 python3 -V
 
@@ -32,7 +32,7 @@ then
    echo "Creating output folder \$FP16"
    mkdir -p $Output_folder_16 
    mkdir -p $XML_IR_FP16 
-   python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
+   mo \
    --input_model resources/worker_safety_mobilenet.caffemodel \
    --model_name mobilenet-ssd \
    --data_type $FP16 \
@@ -40,12 +40,14 @@ then
 
    python3 $Sample_name  -i $INPUT_FILE  -m  $IR_FP16  --labels labels.txt -o $Output_folder_16 -d $DEVICE -nireq $NUM_REQS
 
+
+   #source /opt/intel/openvino_$OPENVINO_VERSION/setupvars.sh
    python3 safety_gear_detection_annotate.py -i $INPUT_FILE \
                                      -o $Output_folder_16 \
                                      -f $SCALE_FRAME_RATE \
                                      -s $SCALE_RESOLUTION
-
-
+   
+   #source /opt/intel/openvino_$OPENVINO_VERSION/setupvars.sh
 fi
 
 

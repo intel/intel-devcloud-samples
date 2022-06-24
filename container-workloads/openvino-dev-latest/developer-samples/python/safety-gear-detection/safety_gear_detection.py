@@ -27,6 +27,8 @@ import io
 from openvino.inference_engine import IECore
 from pathlib import Path
 #from qarpo.demoutils import progressUpdate
+#import applicationMetricWriter
+import ngraph as ng
 
 def build_argparser():
     parser = ArgumentParser()
@@ -74,7 +76,7 @@ def build_argparser():
 
 
 def processBoxes(frame_count, res, labels_map, prob_threshold, initial_w, initial_h, result_file):
-    for obj in res[0][0]:
+    for obj in res:
         dims = ""
         # Draw only objects when probability more than specified threshold
         if obj[2] > prob_threshold:
@@ -141,19 +143,37 @@ def main():
 
     # Read IR
     log.info("Reading IR...")
-    log.info("DEVICE:")
-    log.info(args.device)
     net = ie.read_network(model=model_xml, weights=model_bin)
 
     #Ensure Model's layer's are supported by MKLDNN
     if "CPU" in args.device:
         supported_layers = ie.query_network(net, "CPU")
+        ng_function = ng.function_from_cnn(net)
+        not_supported_layers = \
+                [node.get_friendly_name() for node in ng_function.get_ordered_ops() \
+                if node.get_friendly_name() not in supported_layers]
 
-    assert len(net.inputs.keys()) == 1, "Sample supports only single input topologies"
-    assert len(net.outputs) == 1, "Sample supports only single output topologies"
+        if len(not_supported_layers) != 0:
+            log.error("Following layers are not supported by the plugin for specified device {}:\n {}".
+                      format(args.device, ', '.join(not_supported_layers)))
+            log.error("Please try to specify cpu extensions library path in sample's command line parameters using -l "
+                      "or --cpu_extension command line argument")
+            sys.exit(1)
+    assert (len(net.input_info.keys()) == 1 or len(net.input_info.keys()) == 2), "Sample supports topologies only with 1 or 2 inputs"
+    for blob_name in net.input_info:
+        if len(net.input_info[blob_name].input_data.shape) == 4:
+            input_blob = blob_name
+        elif len(net.input_info[blob_name].input_data.shape) == 2:
+            img_info_input_blob = blob_name
+        else:
+            raise RuntimeError("Unsupported {}D input layer '{}'. Only 2D and 4D input layers are supported"
+                               .format(len(net.input_info[blob_name].input_data.shape), blob_name))
+    #out_blob = next(iter(net.outputs))
+    output_postprocessor = get_output_postprocessor(net)
 
-    input_blob = next(iter(net.inputs))
-    out_blob = next(iter(net.outputs))
+
+    # Read and pre-process input image
+    n, c, h, w = net.input_info[input_blob].input_data.shape
 
     if args.input == 'cam':
         input_stream = 0
@@ -166,17 +186,11 @@ def main():
  
 
     log.info("Starting preprocessing...")
+    #job_id = str(os.environ['PBS_JOBID'])
     result_file = open(os.path.join(args.output_dir, f'output.txt'), "w")
     pre_infer_file = os.path.join(args.output_dir, f'pre_progress.txt')
     infer_file = os.path.join(args.output_dir, f'i_progress.txt')
     processed_vid = '/tmp/processed_vid.bin'
-
-    # Read and pre-process input image
-    if isinstance(net.inputs[input_blob], list):
-        n, c, h, w = net.inputs[input_blob]
-    else:
-        n, c, h, w = net.inputs[input_blob].shape
-    del net
 
 
     cap = cv2.VideoCapture(input_stream)
@@ -227,7 +241,8 @@ def main():
                     in_frame = np.reshape(deserialized_bytes, newshape=(n, c, h, w))
                     inf_time = time.time()
                     exec_net.start_async(request_id=current_inference, inputs={input_blob: in_frame})
-                    det_time = time.time() - inf_time       
+                    det_time = time.time() - inf_time
+                    #applicationMetricWriter.send_inference_time(det_time*1000)         
                 
                 # Retrieve the output of an earlier inference request
                 if previous_inference >= 0:
@@ -235,8 +250,9 @@ def main():
                     if status is not 0:
                         raise Exception("Infer request not completed successfully")
                     # Parse inference results
-                    det_time = time.time() - inf_time                 
-                    res = infer_requests[previous_inference].outputs[out_blob]
+                    det_time = time.time() - inf_time
+                    #applicationMetricWriter.send_inference_time(det_time*1000)                      
+                    res = output_postprocessor(exec_net.requests[previous_inference].output_blobs)
                     processBoxes(frame_count, res, labels_map, args.prob_threshold, width, height, result_file)
                     frame_count += 1
 
@@ -256,15 +272,21 @@ def main():
         # End while loop
         total_time = time.time() - infer_time_start
         with open(os.path.join(args.output_dir, f'performance.txt'), 'w') as f:
+            #f.write('{:.3g} \n'.format(total_time))
+            #f.write('{} \n'.format(frame_count))
             f.write('Throughput: {:.3g} FPS \n'.format(frame_count/total_time))
             f.write('Latency: {:.3f} ms\n'.format(total_time*1000))
+
 
         result_file.close()
     
     
     finally:
         log.info("Processing done...")
+        #applicationMetricWriter.send_application_metrics(model_xml, args.device)
         del exec_net
+        
+    #applicationMetricWriter.send_application_metrics(model_xml, args.device)
 
 if __name__ == '__main__':
     sys.exit(main() or 0)

@@ -20,8 +20,9 @@ NUMREQUEST=2
 THRESHOLD=0.4
 NUMSTREAMS=1
 LABEL_FILE="coco.names"
-source /opt/intel/openvino_$OPENVINO_VERSION/bin/setupvars.sh
+source /opt/intel/openvino_$OPENVINO_VERSION/setupvars.sh
 
+tf_config="/usr/local/lib/python3.6/dist-packages/openvino/tools/mo/front/tf/yolo_v3_tiny.json"
 
 #Download Tiny YOLO V3 Darknet Model Weights and COCO labels file
 curl https://pjreddie.com/media/files/yolov3-tiny.weights > yolov3-tiny.weights
@@ -39,9 +40,9 @@ then
         mkdir -p $Output_folder_16
         mkdir -p $XML_IR_FP16
 	#Create the IR files for the inference model - FP16
-	python3 /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/mo.py \
+	mo \
 	--input_model frozen_darknet_yolov3_model.pb \
-	--transformations_config /opt/intel/openvino_$OPENVINO_VERSION/deployment_tools/model_optimizer/extensions/front/tf/yolo_v3_tiny.json \
+	--transformations_config $tf_config  \
 	--data_type $FP16 \
 	--batch 1 \
 	--output_dir $XML_IR_FP16
