@@ -18,7 +18,7 @@ The Tiny YOLO V3 Object Detection application uses the Intel® Distribution of O
 
 The following files are used in the application:
 
-* [openvino_cgvh_dev_2021.4.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile): Utilizes [openvino/ubuntu18_data_dev](https://hub.docker.com/r/openvino/ubuntu18_data_dev) as the base image and defines configurable runtime environment variables.
+* [openvino_cgvh_dev_2022.1.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2022.1.dockerfile): Utilizes [openvino/ubuntu18_dev](https://hub.docker.com/r/openvino/ubuntu18_dev) as the base image and defines configurable runtime environment variables.
 * [run_tiny_yolo_v3.sh](run_tiny_yolo_v3.sh): Serves as an entrypoint for the container sample. The script:
 	* Downloads Tiny YOLO V3 Darknet Model Weights and COCO labels file.
 	* Clones the tensorflow-yolo-v3 repository to access the convert_weights_pb.py python script that can convert all different types of YOLO and Tiny YOLO models to frozen Tensorflow Protobuf files
@@ -37,7 +37,7 @@ The following files are used in the application:
 ## Build and run on DevCloud
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-buildah bud --format docker -f  ./developer-samples/python/tiny-yolo-v3/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile -t $REGISTRY_URL/tiny-yolo-v3:custom .
+buildah bud --format docker -f  ./developer-samples/python/tiny-yolo-v3/dockerfile/ubuntu18/openvino_cgvh_dev_2022.1.dockerfile -t $REGISTRY_URL/tiny-yolo-v3:custom .
 ```
 
 Push the container to your devcloud private registry:
@@ -57,7 +57,7 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 ## Build and run on local system
 Navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-docker build -f ./developer-samples/python/tiny-yolo-v3/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile -t $REGISTRY_URL/tiny-yolo-v3:custom .
+docker build -f ./developer-samples/python/tiny-yolo-v3/dockerfile/ubuntu18/openvino_cgvh_dev_2022.1.dockerfile -t $REGISTRY_URL/tiny-yolo-v3:custom .
 ```
 
 Run the container locally by mounting a local directory to retrieve the results:
@@ -66,7 +66,7 @@ docker run --rm -it -e RUN_ON_PREM=/mount_folder -v {PATH-TO-HOST-DIR}:/mount_fo
 ```
 **NOTE:** 
 * To enable GPU access, use runtime sample config by passing ``-e DEVICE=GPU``
-* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu18_data_dev](https://hub.docker.com/r/openvino/ubuntu18_data_dev) for more info.
+* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu18_dev](https://hub.docker.com/r/openvino/ubuntu18_dev) for more info.
 
 
 ---
