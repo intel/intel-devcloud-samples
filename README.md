@@ -11,7 +11,7 @@ Each sample contains instructions for:
 
 Container applications demonstrating inference pipelines with Intel® Distribution of OpenVINO™ toolkit - Inference Engine. 
 
-[![Stable release](https://img.shields.io/badge/version-2021.4.2-blue.svg)](https://github.com/openvinotoolkit/openvino/releases/tag/2021.4.2) 
+[![Stable release](https://img.shields.io/badge/version-2022.1.0-blue.svg)](https://github.com/openvinotoolkit/openvino/releases/tag/2022.1.0) 
 
 | Application | Description |
 | --- | --- |
