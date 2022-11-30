@@ -11,7 +11,7 @@ Each sample contains instructions for:
 
 Container applications demonstrating inference pipelines with Intel® Distribution of OpenVINO™ toolkit - Inference Engine. 
 
-[![Stable release](https://img.shields.io/badge/version-2022.1.0-blue.svg)](https://github.com/openvinotoolkit/openvino/releases/tag/2022.1.0) 
+[![Stable release](https://img.shields.io/badge/version-2021.4.2-blue.svg)](https://github.com/openvinotoolkit/openvino/releases/tag/2021.4.2) 
 
 | Application | Description |
 | --- | --- |
@@ -33,17 +33,6 @@ TensorFlow* container applications with OpenVINO™ toolkit optimizations.
 | --- | --- |
 | [Object Detection](framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection/README.md) | The sample showcases object detection using YoloV3 TensorFlow Model on OpenVINO™ integration with Tensorflow. |
 | [Classification](framework-integration/openvino-dev-latest/openvino-tensorflow/classification/README.md) | The sample is to showcase classification of image with inception V3 Tensorflow model using OpenVINO™ integration with Tensorflow. |
-
-### ONNXRuntime OpenVINO™ Execution Provider Samples
-
-ONNXRuntime container applications with OpenVINO™ toolkit optimizations.
-
-[![Stable release](https://img.shields.io/badge/version-v1.1.0-blue.svg)](https://github.com/intel/onnxruntime/releases/tag/v3.4)
-
-| Application | Description |
-| --- | --- |
-| [Object Detection](framework-integration/openvino-dev-latest/onnxrt/object-detection/README.md) | The sample showcases object detection using Tiny YoloV2 ONNX Model on OpenVINO™ Execution Provider for ONNXRuntime. |
-| [Classification](framework-integration/openvino-dev-latest/onnxrt/classification/README.md) | The sample is to showcase classification of image with Squeezenet ONNX model using OpenVINO™ Execution Provider for ONNXRuntime. |
 
 ### OpenVINO™ Integration with Torch-ORT Samples
 
