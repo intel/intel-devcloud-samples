@@ -38,7 +38,7 @@ TensorFlow* container applications with OpenVINO™ toolkit optimizations.
 
 PyTorch* container applications with OpenVINO™ toolkit optimizations.
 
-[![Stable release](https://img.shields.io/badge/version-beta-blue.svg)](https://github.com/pytorch/ort)
+[![Stable release](https://img.shields.io/badge/version-1.13.1-blue.svg)](https://github.com/pytorch/ort)
 
 | Application | Description |
 | --- | --- |
