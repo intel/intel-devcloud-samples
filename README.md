@@ -33,3 +33,14 @@ TensorFlow* container applications with OpenVINO™ toolkit optimizations.
 | --- | --- |
 | [Object Detection](framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection/README.md) | The sample showcases object detection using YoloV3 TensorFlow Model on OpenVINO™ integration with Tensorflow. |
 | [Classification](framework-integration/openvino-dev-latest/openvino-tensorflow/classification/README.md) | The sample is to showcase classification of image with inception V3 Tensorflow model using OpenVINO™ integration with Tensorflow. |
+
+### OpenVINO™ Integration with Torch-ORT Samples
+
+PyTorch* container applications with OpenVINO™ toolkit optimizations.
+
+[![Stable release](https://img.shields.io/badge/version-1.13.1-blue.svg)](https://github.com/pytorch/ort)
+
+| Application | Description |
+| --- | --- |
+| [Image Classification](framework-integration/openvino-dev-latest/openvino-torch-ort/image-classification/README.md) | The sample showcases image classification using ResNet-50 PyTorch Model on OpenVINO™ integration with Torch-ORT. |
+| [Sequence Classification](framework-integration/openvino-dev-latest/openvino-torch-ort/sequence-classification/README.md) | The sample is to showcase sequence classification of text with BERT PyTorch model using OpenVINO™ integration with Torch-ORT. |
