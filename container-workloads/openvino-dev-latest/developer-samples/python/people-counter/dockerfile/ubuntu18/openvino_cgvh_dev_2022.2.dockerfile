@@ -3,8 +3,7 @@
 
 #Building openvino base image from public source
 
-
-FROM openvino/ubuntu18_dev:2022.1.0
+FROM openvino/ubuntu18_dev:2022.2.0
 RUN pip install openvino-dev[caffe]
 
 RUN echo "OpenVINO installation done  ......."
@@ -15,7 +14,8 @@ RUN chmod 0777 ${INTEL_OPENVINO_DIR}/python
 
 RUN mkdir -p  ${INTEL_OPENVINO_DIR}/python/samples
 
-RUN apt-get update && apt-get install vim -y
+RUN apt-get update && apt-get install ffmpeg -y
+
 
 ADD developer-samples/python/people-counter ${INTEL_OPENVINO_DIR}/python/samples/people-counter
 
@@ -29,7 +29,7 @@ ENV DEVICE=$DEVICE
 ARG PRECISION="FP16"
 ENV PRECISION="$PRECISION"
 
-ARG OPENVINO_VERSION="2022.1.0.643"
+ARG OPENVINO_VERSION="2022.2.0.7713"
 ENV OPENVINO_VERSION=$OPENVINO_VERSION
 
 ARG OUTPUT_FOLDER="output_people_counter_latest"
@@ -47,7 +47,10 @@ ENV RUN_ON_PREM=$RUN_ON_PREM
 ARG INPUT_FILE="resources/Pedestrain_Detect_2_1_1.mp4"
 ENV INPUT_FILE=$INPUT_FILE
 
-RUN ["/bin/bash", "-c", "source ${INTEL_OPENVINO_DIR}/setupvars.sh"]
+#RUN ["/bin/bash", "-c", "source ${INTEL_OPENVINO_DIR}/setupvars.sh"]
+
+RUN source ${INTEL_OPENVINO_DIR}/setupvars.sh
+
 RUN echo "Generating OpenVINO IR files ......."
 RUN echo "Executing object detection app using OpenVINO ......."
 

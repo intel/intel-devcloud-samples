@@ -47,8 +47,7 @@ then
             --report_type detailed_counters \
             --report_folder  $Output_folder_16
 
-
-   #cp  /opt/intel/openvino_$OPENVINO_VERSION/python/samples/benchmarkApp_python/*.csv  $Output_folder_16 
+   cat $RUN_ON_PREM/$OUTPUT_FOLDER/results/FP16/performance.txt
 
 fi
 

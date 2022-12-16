@@ -1,5 +1,8 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 
+
+
+python3 -V 
 echo "Openvino Package Version: openvino_$OPENVINO_VERSION"
 echo "Device:  $DEVICE"
 echo "Precision:  $PRECISION"

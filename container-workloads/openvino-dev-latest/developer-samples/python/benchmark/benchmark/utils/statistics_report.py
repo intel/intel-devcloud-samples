@@ -35,6 +35,7 @@ class StatisticsReport:
         COMMAND_LINE_PARAMETERS = 0,
         RUNTIME_CONFIG = 1,
         EXECUTION_RESULTS = 2
+        #job_id = str(os.environ['PBS_JOBID'])
 
     def __init__(self, config):
         self.config = config
@@ -51,8 +52,8 @@ class StatisticsReport:
         def dump_parameters(f, parameters):
             for k, v in parameters:
                 f.write('{}{}{}\n'.format(k, self.csv_separator, v))
-
-        with open(os.path.join(self.config.report_folder, 'benchmark_report.csv'), 'w') as f:
+        #job_id = str(os.environ['PBS_JOBID']).split('.')[0]
+        with open(os.path.join(self.config.report_folder,'benchmark_report.csv'), 'w') as f:
             if self.Category.COMMAND_LINE_PARAMETERS in self.parameters.keys():
                 f.write('Command line parameters\n')
                 dump_parameters(f, self.parameters[self.Category.COMMAND_LINE_PARAMETERS])
@@ -90,8 +91,8 @@ class StatisticsReport:
         if not perf_counts:
             logger.info('Performance counters are empty. No reports are dumped.')
             return
-
-        filename = os.path.join(self.config.report_folder, 'benchmark_{}_report.csv'.format(self.config.report_type))
+        #job_id = str(os.environ['PBS_JOBID']).split('.')[0]
+        filename = os.path.join(self.config.report_folder,'benchmark_{}_report.csv'.format(self.config.report_type))
         with open(filename, 'w') as f:
             if self.config.report_type == detailedCntReport:
                 for pc in perf_counts:

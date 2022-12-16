@@ -32,6 +32,7 @@
 
 import os
 import sys
+import json
 from datetime import datetime
 from .benchmark import Benchmark
 from .parameters import parse_args
@@ -45,6 +46,7 @@ from .utils.utils import next_step, config_network_inputs, get_number_iterations
     get_command_line_arguments, parse_nstreams_value_per_device, parse_devices, get_inputs_info, \
     get_batch_size, load_config, dump_config
 from .utils.statistics_report import StatisticsReport, averageCntReport, detailedCntReport
+#from qarpo.demoutils import simpleProgressUpdate
 
 
 
@@ -215,6 +217,7 @@ def run(args):
             start_time = datetime.utcnow()
             ie_network = benchmark.read_network(args.path_to_model)
             duration_ms = "{:.2f}".format((datetime.utcnow() - start_time).total_seconds() * 1000)
+            
             logger.info("Read network took {} ms".format(duration_ms))
             if statistics:
                 statistics.add_parameters(StatisticsReport.Category.EXECUTION_RESULTS,
@@ -337,16 +340,23 @@ def run(args):
         if benchmark.niter and not benchmark.duration_seconds:
             progress_bar_total_count = benchmark.niter
 
-        progress_bar = ProgressBar(progress_bar_total_count, args.stream_output, args.progress) if args.progress else None
+        #progress_bar = ProgressBar(progress_bar_total_count, args.stream_output, args.progress) if args.progress else None
 
         duration_ms =  "{:.2f}".format(benchmark.first_infer(exe_network))
+        
+        print("***********First inference took {} ms".format(duration_ms))
+       
+       # job_id = str(os.environ['PBS_JOBID']).split('.')[0]
+        #with open(os.path.join('./results/stats.json'), 'w') as f:
+        with open('stats.json', 'w') as f:
+             json.dump(duration_ms, f)
         logger.info("First inference took {} ms".format(duration_ms))
         if statistics:
             statistics.add_parameters(StatisticsReport.Category.EXECUTION_RESULTS,
                                     [
                                         ('first inference time (ms)', duration_ms)
                                     ])
-        fps, latency_ms, total_duration_sec, iteration = benchmark.infer(exe_network, batch_size, progress_bar)
+        fps, latency_ms, total_duration_sec, iteration = benchmark.infer(exe_network, batch_size)
 
         # ------------------------------------ 11. Dumping statistics report -------------------------------------------
         next_step()
@@ -391,15 +401,21 @@ def run(args):
         print('Duration:   {:.2f} ms'.format(get_duration_in_milliseconds(total_duration_sec)))
         if MULTI_DEVICE_NAME not in device_name:
             print('Latency:    {:.2f} ms'.format(latency_ms))
-        print('Throughput: {:.2f} FPS'.format(fps))
+            print('Throughput: {:.2f} FPS'.format(fps))
+        # print('Device: {}'.format(device_name))
+        stats = {}
+        stats['Time'] = str('{:.2f}'.format(total_duration_sec))
+        stats['fps'] = str('{:.2f}'.format(fps))
+        stats['frames'] = str('{}'.format(iteration))
 
         print(args.report_folder)
         if args.report_folder:
             with open(os.path.join(args.report_folder, f'performance.txt'), 'w') as f:
-                f.write('Latency {:.2f} ms\n'.format(get_duration_in_milliseconds(total_duration_sec)))
+                f.write('Latency: {:.2f} ms\n'.format(latency_ms))
                 f.write('Throughput: {:.2f} FPS \n'.format(fps))
 
-
+        with open('stats.json', 'w') as f:
+            json.dump(stats, f)
 
         del exe_network
 

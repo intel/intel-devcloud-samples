@@ -4,7 +4,7 @@ Use an optimized and pre-trained MobileNet-SSD neural network to detect vehicles
 ## How It Works
 The sample converts a **mobilenet-ssd** caffe model for optimized inference and feeds a video frame-by-frame to the OpenVINO Inference Engine. The identified results i.e. detected vehicles are stored to a text file which are used later to annotate all the frames of the original video.
 
-* [openvino_cgvh_dev_2022.1.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2022.1.dockerfile): Utilizes [openvino/ubuntu18_dev](https://hub.docker.com/r/openvino/ubuntu18_dev) as the base image and defines configurable runtime environment variables.
+* [openvino_cgvh_dev_2022.2.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2022.2.dockerfile): Utilizes [openvino/ubuntu18_dev](https://hub.docker.com/r/openvino/ubuntu18_dev) as the base image and defines configurable runtime environment variables.
 * [run_object_detection.sh](run_object_detection.sh): Serves as an entrypoint for the container sample, utilizes the pre-installed model optimizer to convert the mobilenet-ssd [caffe model](mobilenet-ssd/mobilenet-ssd.caffemodel) before running inference and annotation python scripts.
 * [object_detection.py](object_detection.py): Demonstrates asynchronous inference pipeline on input video file, and saves an ``output.txt`` file during execution with resulting bounding box coordinates, detected labels corresponding to IDs from [labels.txt](labels.txt), detection probabilities along with ``perfomance.txt`` capturing latency and throughput metrics.
 * [object_detection_annotate.py](safety_gear_detection_annotate.py): Reads the original video file, annotates frame-by-frame inference results (e.g. bounding boxes, label text) and saves a new output.mp4 file after execution.
@@ -21,7 +21,7 @@ The sample converts a **mobilenet-ssd** caffe model for optimized inference and 
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 
 ```
-buildah bud --format docker -f ./developer-samples/python/object-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2022.1.dockerfile -t $REGISTRY_URL/object-detection:custom .
+buildah bud --format docker -f ./developer-samples/python/object-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2022.2.dockerfile -t $REGISTRY_URL/object-detection:custom .
 ```
 
 Push the container to your devcloud private registry:
@@ -41,7 +41,7 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 ## Build and run on local system
 Navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-docker build -f ./developer-samples/python/object-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2022.1.dockerfile -t object-detection:custom .
+docker build -f ./developer-samples/python/object-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2022.2.dockerfile -t object-detection:custom .
 ```
 
 Run the container locally by mounting a local directory to retrieve the results:

@@ -1,0 +1,230 @@
+{
+   "job":{
+      "command":"qsub benchmark_app_job.sh -l nodes=1:NODE -F \"RESULTS TARGET async\" -v VENV_PATH,OPENVINO_RUNTIME",
+      "output_type":".mp4",
+      "results_path":"results/",
+      "results_defines":"RESULTS",
+      "control_widgets":[
+         "telemetry"
+      ],
+      "plots":[
+         {
+            "title":"Total Time",
+            "type":"Time",
+            "ylabel":"Time in seconds",
+            "xlabel":"Architectures",
+            "selector":[
+               "Target architecture"
+            ]
+         },
+         {
+            "title":"Frames per second",
+            "type":"fps",
+            "ylabel":"Number of frames per second",
+            "xlabel":"Architectures"
+         }
+      ]
+   },
+   "inputs":[
+      {
+         "Target_node":{
+            "display_name":"Target node",
+            "type":"select",
+            "default":" ",
+            "defines":[
+               "NODE"
+            ],
+            "options":[
+               {
+                  "name":"Select Node",
+                  "dummy":"True",
+                  "controls":{
+                     "Target_arch":[
+                        "Intel® Core™ i7-8665UE",
+                        "Intel® UHD Graphics 620",
+                        "Intel® Core™ i5 8365UE",
+                        "Intel® UHD Graphics 620",
+                        "Intel® Core™ i5-6500TE",
+                        "Intel® UHD Graphics 530",
+                        "Intel® Core™ i3-10100TE",
+                        "Intel® Core™ i5-12500TE",
+                        "Intel® UHD Graphics 770",
+                        "Intel® Core™ i7-1185G7E",
+                        "Intel® Iris XE graphics"
+                     ]
+                  }
+               },
+               {
+                  "name":"IDC-014/\nIntel® Core™ i7-8665UE",
+                  "defines":{
+                     "NODE":"idc014"
+                  },
+                  "controls":{
+                     "Target_arch":[
+                        "Intel® Core™ i7-8665UE CPU",
+                        "Intel® UHD Graphics 620 GPU"
+                     ]
+                  }
+               },
+               {
+                  "name":"IDC-038/\nIntel® Core™ i5 8365UE",
+                  "defines":{
+                     "NODE":"idc038"
+                  },
+                  "controls":{
+                     "Target_arch":[
+                        "Intel® Core™ i5 8365UE CPU",
+                        "Intel® UHD Graphics 620 GPU"
+                     ]
+                  }
+               },
+               {
+                  "name":"IDC-002MX8/\nIntel® Core™ i5-6500TE",
+                  "defines":{
+                     "NODE":"idc002mx8"
+                  },
+                  "controls":{
+                     "Target_arch":[
+                        "Intel® Core™ i5-6500TE CPU",
+                        "Intel® UHD Graphics 530 GPU"
+                     ]
+                  }
+               },
+               {
+                  "name":"IDC-043/\nIntel® Core™ i3-10100TE",
+                  "defines":{
+                     "NODE":"idc043"
+                  },
+                  "controls":{
+                     "Target_arch":[
+                        "Intel® Core™ i3-10100TE CPU"
+                     ]
+                  }
+               },
+               {
+                  "name":"IDC-073/\nIntel® Core™ i5-12500TE",
+                  "defines":{
+                     "NODE":"idc073"
+                  },
+                  "controls":{
+                     "Target_arch":[
+                        "Intel® Core™ i5-12500TE CPU",
+                        "Intel® UHD Graphics 770 GPU"
+                     ]
+                  }
+               },
+               {
+                  "name":"IDC-045/\nIntel® Core™ i7-1185G7E",
+                  "defines":{
+                     "NODE":"idc045"
+                  },
+                  "controls":{
+                     "Target_arch":[
+                        "Intel® Core™ i7-1185G7E CPU",
+                        "Intel® Iris XE graphics GPU"
+                     ]
+                  }
+               }
+            ]
+         }
+      },
+      {
+         "Target_arch":{
+            "display_name":"Target architecture",
+            "type":"select",
+            "default":" ",
+            "defines":[
+               "TARGET",
+               "FP_MODEL",
+               "N_REQ"
+            ],
+            "options":[
+               {
+                  "name":"Select Architecture",
+                  "dummy":"True"
+               },
+               {
+                  "name":"Intel® Core™ i7-8665UE CPU",
+                  "defines":{
+                     "TARGET":"CPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               },
+               {
+                  "name":"Intel® UHD Graphics 620 GPU",
+                  "defines":{
+                     "TARGET":"GPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               },
+               {
+                  "name":"Intel® Core™ i5 8365UE CPU",
+                  "defines":{
+                     "TARGET":"CPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               },
+               {
+                  "name":"Intel® Core™ i5-6500TE CPU",
+                  "defines":{
+                     "TARGET":"CPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"6"
+                  }
+               },
+               {
+                  "name":"Intel® UHD Graphics 530 GPU",
+                  "defines":{
+                     "TARGET":"GPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               },
+               {
+                  "name":"Intel® Core™ i3-10100TE CPU",
+                  "defines":{
+                     "TARGET":"CPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               },
+               {
+                  "name":"Intel® Core™ i5-12500TE CPU",
+                  "defines":{
+                     "TARGET":"CPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               },
+               {
+                  "name":"Intel® UHD Graphics 770 GPU",
+                  "defines":{
+                     "TARGET":"GPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               },
+               {
+                  "name":"Intel® Core™ i7-1185G7E CPU",
+                  "defines":{
+                     "TARGET":"CPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               },
+               {
+                  "name":"Intel® Iris XE graphics GPU",
+                  "defines":{
+                     "TARGET":"GPU",
+                     "FP_MODEL":"FP16",
+                     "N_REQ":"4"
+                  }
+               }
+            ]
+         }
+      }
+   ]
+}

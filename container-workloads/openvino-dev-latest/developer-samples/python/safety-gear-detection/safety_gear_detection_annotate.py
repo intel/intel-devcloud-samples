@@ -43,8 +43,8 @@ def post_process(input_stream, input_data, out_path, scale_frame_rate, scale_res
         out_w = int(scale_resolution*width)
         out_h = int(scale_resolution*height)
         #vw = cv2.VideoWriter(out_path, 0x00000021, 50.0 / scale_frame_rate, (out_w, out_h), True)
-        #vw = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'avc1'), 50.0 / scale_frame_rate, (out_w, out_h), True)
-        vw = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'mp4v'), 50.0 / scale_frame_rate, (out_w, out_h), True)
+        vw = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'avc1'), 50.0 / scale_frame_rate, (out_w, out_h), True)
+        #vw = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*'mp4v'), 50.0 / scale_frame_rate, (out_w, out_h), True)
         video_len = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     else:
         print('failed to open input video stream')

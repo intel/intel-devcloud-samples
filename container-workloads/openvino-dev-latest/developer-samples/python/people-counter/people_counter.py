@@ -33,7 +33,6 @@ from argparse import ArgumentParser
 from inference import Network
 from pathlib import Path
 sys.path.insert(0, str(Path().resolve().parent.parent))
-#from qarpo.demoutils import *
 
 def build_argparser():
     """
@@ -152,7 +151,6 @@ def main():
     cur_request_id = 0
     pre_request_id = 1 - num_infer_req
 
-    #job_id = os.environ['PBS_JOBID']
     progress_file_path = os.path.join(args.output_dir, f'i_progress.txt')
     post_progress_file_path = os.path.join(args.output_dir, f'post_progress.txt')
 
@@ -166,7 +164,7 @@ def main():
     prob_threshold = args.prob_threshold
     initial_w = cap.get(3)
     initial_h = cap.get(4)
-    people_counter = cv2.VideoWriter(os.path.join(args.output_dir, f"output.mp4"), cv2.VideoWriter_fourcc(*"mp4v"), fps, (int(initial_w), int(initial_h)), True)
+    people_counter = cv2.VideoWriter(os.path.join(args.output_dir, f"output.mp4"), cv2.VideoWriter_fourcc(*"avc1"), fps, (int(initial_w), int(initial_h)), True)
     while True:
         if frame_count < video_len:
             flag, frame = cap.read()
@@ -197,8 +195,6 @@ def main():
                     perf_count = infer_network.performance_counter(pre_request_id)
                     performance_counts(perf_count)
 
-                #if len(result_list)%10 == 0 or len(result_list) == video_len:
-                    #progressUpdate(progress_file_path, time.time()-infer_time_start, frame_count, video_len)
 
                 if len(result_list) == video_len:
                     break
@@ -245,8 +241,6 @@ def main():
         last_count = current_count
         people_counter.write(frame)
         frame_count += 1
-        #if frame_count%10 == 0:
-            #progressUpdate(post_progress_file_path, time.time()-post_processing_time_start, frame_count, video_len)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-tag=2022.1
+tag=2022.2
 # run on local machine
 sudo docker run  -e RUN_ON_PREM=data -it people-counter_$tag:latest
 # run on on prem cluster

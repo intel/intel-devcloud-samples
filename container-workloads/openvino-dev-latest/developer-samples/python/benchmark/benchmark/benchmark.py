@@ -157,9 +157,6 @@ class Benchmark:
         times.sort()
         latency_ms = median(times)
         fps = batch_size * 1000 / latency_ms if self.api_type == 'sync' else batch_size * iteration / total_duration_sec
-
-
-
         if progress_bar:
             progress_bar.finish()
         return fps, latency_ms, total_duration_sec, iteration
