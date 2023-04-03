@@ -15,11 +15,8 @@ The sample uses ONNXRuntime OpenVINO EP for the classification. The identified r
 | ``-v {PATH-TO-HOST-DIR}:/mount_folder`` | PATH-TO-HOST-DIR is the directory to save results. e.g. mount point to retrieve logs, results |
 
 ## Build and run on DevCloud
-Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to repository root.
-```
-cd /data/intel-devcloud-samples/
-```
-Build image:
+Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}` directory and build:
+
 ```
 buildah bud --format docker -f ./framework-integration/openvino-dev-latest/onnxrt/object-detection/dockerfile/ubuntu18/onnxrt_ovep.dockerfile -t $REGISTRY_URL/ovep-object-detection:custom .
 ```
@@ -39,7 +36,7 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 
 
 ## Build and run on local system
-Navigate to repository root.
+
 ```
 docker build -t ovep-object-detection:custom -f framework-integration/openvino-dev-latest/onnxrt/object-detection/dockerfile/ubuntu18/onnxrt_ovep.dockerfile .
 ```

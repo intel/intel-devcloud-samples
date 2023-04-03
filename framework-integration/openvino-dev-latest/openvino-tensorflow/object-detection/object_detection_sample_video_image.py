@@ -26,6 +26,10 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+# Enable these variables for runtime inference optimizations
+os.environ["OPENVINO_TF_CONVERT_VARIABLES_TO_CONSTANTS"] = "1"
+os.environ[
+    "TF_ENABLE_ONEDNN_OPTS"] = "1"
 import argparse
 import numpy as np
 import tensorflow as tf
@@ -55,7 +59,7 @@ def load_labels(label_file):
         label.append(l.rstrip())
     return label
 
-def run_detect(model, label_file, input_file, input_height, input_width,filename, backend_name, output_filename, flag_enable):
+def run_detect(model, label_file, input_file, input_height, input_width,filename, backend_name, output_filename):
     # Load model and process input image
     model = tf.saved_model.load(model_file)
 
@@ -85,8 +89,7 @@ def run_detect(model, label_file, input_file, input_height, input_width,filename
         cap = cv2.VideoCapture(input_file)
         video_writer = cv2.VideoWriter()
         output_resolution = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT )))
-        output_filename = "/mount_folder/"+flag_enable+output_filename
-        print(output_filename)
+        output_filename = "/mount_folder/"+flag_enable+"_"+output_filename
         video_writer.open(output_filename, cv2.VideoWriter_fourcc(*'avc1'), 20.0, output_resolution)
     elif input_mode == 'image':
         images = [input_file]
@@ -104,7 +107,6 @@ def run_detect(model, label_file, input_file, input_height, input_width,filename
     images_len = len(images)
     image_id = -1
     # Run inference
-   
     while True:
         image_id += 1
         if input_mode == 'video':
@@ -171,7 +173,7 @@ def run_detect(model, label_file, input_file, input_height, input_width,filename
         f = open(result_file_name, "a")
         f.write(str(fps))
         f.close()
-             
+        
         # post-processing
         image_shape = tuple((frame.shape[0], frame.shape[1]))
         out_boxes, out_classes, out_scores = yolo3_postprocess_np(
@@ -199,10 +201,10 @@ def run_detect(model, label_file, input_file, input_height, input_width,filename
             cv2.imwrite(out_file, img_bbox)
         if input_mode in 'image':
             filename = "/mount_folder/"+flag_enable+"detections.jpg"
-            cv2.imwrite(filename , img_bbox)
+            cv2.imwrite(filename, img_bbox)
             print("Output image is saved in detections.jpg")
         if not args.no_show:
-            #cv2.imshow("detections", img_bbox)
+           # cv2.imshow("detections", img_bbox)
             if cv2.waitKey(1) & 0XFF == ord('q'):
                 break
         if args.rename:
@@ -223,7 +225,7 @@ def run_detect(model, label_file, input_file, input_height, input_width,filename
 if __name__ == "__main__":
     input_file = "./grace_hopper.jpg"
     model_file = "./data/yolo_v4"
-    label_file = "./coco.names"
+    label_file = "./data/coco.names"
     anchor_file = "./yolov4_anchors.txt"
     input_height = 160
     input_width = 160
@@ -322,11 +324,11 @@ if __name__ == "__main__":
             print("Renaming has been disabled")
             args.rename = False
 
-    
-    if args.output_filename:
-        output_filename = args.output_filename
     if args.output_dir:
         output_dir = args.output_dir
+    if args.output_filename:
+        output_filename = args.output_filename
+    
     flag_enable = args.flag
     filename = ""
     # Print list of available backends
@@ -350,5 +352,5 @@ if __name__ == "__main__":
         ovtf.set_backend(backend_name)
     else:
         raise AssertionError("flag_enable string not supported")
-    
-    run_detect(model_file, label_file,input_file,input_height,input_width, filename, backend_name, output_filename, flag_enable)   
+        
+    run_detect(model_file, label_file,input_file,input_height,input_width, filename, backend_name, output_filename)   

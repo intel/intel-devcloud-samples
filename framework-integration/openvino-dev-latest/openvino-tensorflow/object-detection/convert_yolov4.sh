@@ -10,6 +10,7 @@ mkdir temp_build
 cd temp_build
 python3 -m venv env
 source env/bin/activate
+export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 python3 -m pip install --upgrade pip
 python3 -m pip install tensorflow==2.5.1 opencv-python==4.2.0.32
 python3 -m pip install pillow numpy matplotlib keras_applications
@@ -21,6 +22,7 @@ wget https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names
 wget -O weights/yolov4.weights https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
 python3 tools/model_converter/convert.py --yolo4_reorder cfg/yolov4.cfg weights/yolov4.weights weights/yolov4.h5
 python3 tools/model_converter/keras_to_tensorflow.py --input_model weights/yolov4.h5 --output_model=weights/${model_name} --saved_model
+mkdir -p ../../data
 cp -r weights/${model_name} ../../data/${model_name}
 cp coco.names ../../data/
 cd ../..

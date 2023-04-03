@@ -29,6 +29,10 @@ from __future__ import print_function
 
 import argparse
 import os
+# Enable these variables for runtime inference optimizations
+os.environ["OPENVINO_TF_CONVERT_VARIABLES_TO_CONSTANTS"] = "1"
+os.environ[
+    "TF_ENABLE_ONEDNN_OPTS"] = "1"
 import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
@@ -65,7 +69,7 @@ def load_labels(label_file):
         label.append(l.rstrip())
     return label
 
-def run_infer(model, label_file, input_file, input_height, input_width, input_mean, input_std, backend_name, output_filename, flag_enable):
+def run_infer(model, label_file, input_file, input_height, input_width, input_mean, input_std, backend_name, filename, output_filename):
     
     #Load the labels
     cap = None
@@ -167,7 +171,7 @@ def run_infer(model, label_file, input_file, input_height, input_width, input_me
         else:
             print("No label file provided. Cannot print classification results")
         if not args.no_show:
-            #cv2.imshow("results", frame)
+           # cv2.imshow("results", frame)
             if cv2.waitKey(1) & 0XFF == ord('q'):
                 break
         if input_mode == 'video':
@@ -266,14 +270,18 @@ if __name__ == "__main__":
     if args.output_file:
         output_filename = args.output_file
     flag_enable = args.flag
+    filename = ""
     if(flag_enable == "native"):
         print('StockTensorflow')
+        filename = "native"
         ovtf.disable()
     elif(flag_enable == "oneDNN"):
         print('oneDNN optimized')
+        filename = "oneDNN"
         ovtf.disable()
         os.environ['TF_ENABLE_ONEDNN_OPTS']='1'
     elif(flag_enable == "openvino"):
+        filename = "openvino"
         print('Openvino Integration With Tensorflow')
         print('Available Backends:')
         backends_list = ovtf.list_backends()
@@ -284,4 +292,4 @@ if __name__ == "__main__":
     else:
         raise AssertionError("flag_enable string not supported")
     
-    run_infer(model, label_file, input_file, input_height, input_width, input_mean, input_std, backend_name, output_filename, flag_enable)
+    run_infer(model, label_file, input_file, input_height, input_width, input_mean, input_std, backend_name, filename, output_filename)

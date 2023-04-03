@@ -4,7 +4,7 @@ This sample application demonstrates how a smart video IoT solution may be creat
 ## How It Works
 The sample uses an Intel pre-trained model from the [Open Model Zoo](https://github.com/openvinotoolkit/open_model_zoo).  The model is a pedestrian detector for the Retail scenario. It is based on MobileNetV2-like backbone that includes depth-wise convolutions to reduce the amount of computation for the 3x3 convolution block. The single SSD head from 1/16 scale feature map has 12 clustered prior boxes. For more information about this model see the documentation for [person-detection-retail-0013](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/intel/person-detection-retail-0013/README.md) model.
 
-* [openvino_cgvh_dev_2022.2.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2022.2.dockerfile): Utilizes [openvino/ubuntu18_dev](https://hub.docker.com/r/openvino/ubuntu18_dev) as the base image and defines configurable runtime environment variables.
+* [openvino_cgvh_dev_2022.3.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2022.3.dockerfile): Utilizes [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
 * [run_people_counter.sh](run_people_counter.sh): Serves as an entrypoint for the container sample, uses the model downloader utility to download the person detection model, creates the data output folder, and launches the python inference script.   
 * [people_counter.py](people_counter.py): Demonstrates asynchronous inference pipeline on input video file, saves the output video with bounding boxes and labels to output.mp4, and generates a ``perfomance.txt`` file capturing latency and throughput metrics.
 
@@ -19,7 +19,7 @@ The sample uses an Intel pre-trained model from the [Open Model Zoo](https://git
 ## Build and run on DevCloud
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-buildah bud --format docker -f  ./developer-samples/python/people-counter/dockerfile/ubuntu18/openvino_cgvh_dev_2022.2.dockerfile -t $REGISTRY_URL/people-counter:custom .
+buildah bud --format docker -f  ./developer-samples/python/people-counter/dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile -t $REGISTRY_URL/people-counter:custom .
 ```
 
 Push the container to your devcloud private registry:
@@ -39,7 +39,7 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 ## Build and run on local system
 Navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-docker build -f ./developer-samples/python/people-counter/dockerfile/ubuntu18/openvino_cgvh_dev_2022.2.dockerfile -t people-counter:custom .
+docker build -f ./developer-samples/python/people-counter/dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile -t people-counter:custom .
 ```
 
 Run the container locally by mounting a local directory to retrieve the results:
@@ -48,7 +48,7 @@ docker run --rm -it -e RUN_ON_PREM=/mount_folder -v {PATH-TO-HOST-DIR}:/mount_fo
 ```
 **NOTE:** 
 * To enable GPU access, use runtime sample config by passing ``-e DEVICE=GPU``
-* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu18_dev](https://hub.docker.com/r/openvino/ubuntu18_dev) for more info.
+* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
 
 
 ---

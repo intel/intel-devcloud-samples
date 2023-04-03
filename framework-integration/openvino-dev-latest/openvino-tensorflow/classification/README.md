@@ -1,4 +1,4 @@
-# Opnvino Integration with Tensorflow Classification
+# Openvino Integration with Tensorflow Classification
 Use an optimized and pre-trained inception v3 neural network to classify images. 
  
 
@@ -6,9 +6,9 @@ Use an optimized and pre-trained inception v3 neural network to classify images.
 The sample uses tensorflow APIs and runs inferecne using OpenVINO Inference Engine as backend. The identified results i.e. classification labels are stored a text file 
 
 * [openvino_cgvh_dev_2021.4.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile): Utilizes [openvino/ubuntu18_runtime](https://hub.docker.com/r/openvino/ubuntu18_runtime) as the base image and defines configurable runtime environment variables.
-* [convert_yolov4.sh](convert_yolov4.sh): This script is used to generate a tensorflow yolo V4 model
-* [run_ovtf_objectdetection.sh](run_ovtf_objectdetection.sh): Serves as an entrypoint for the container sample, utilizes a tensorflow yolo_v4 model[tensorflow model] running inference python scripts with and without Openvino Integration with Tensorflow.
-* [object_detection_sample_video_image.py](object_detection_sample_video_image.py): Demonstrates inference pipeline on input image file, and saves an ``output_detections.jpg`` file during execution with resulting bounding box coordinates, detected labels corresponding to IDs from [coco.names](coco.names), detection probabilities along with ``perfomance.txt`` capturing latency and throughput metrics.
+* [convert_inception_v3.py](convert_inception_v3.py): This script is used to generate a inception v3 model
+* [run_ovtf_classification.sh](run_ovtf_classification_.sh): Serves as an entrypoint for the container sample, utilizes a tensorflow inception model running inference python scripts with and without Openvino Integration with Tensorflow.
+* [classification_sample_video_image.py](classification_sample_video_image.py): Demonstrates inference pipeline on input image file, and prints detected labels along with ``perfomance.txt`` capturing latency and throughput metrics.
 
 
 ## Runtime Configurations
@@ -23,15 +23,15 @@ The sample uses tensorflow APIs and runs inferecne using OpenVINO Inference Engi
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 
 ```
-buildah bud --format docker -f ./framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile -t $REGISTRY_URL/ovtf-object-detection:custom .
+buildah bud --format docker -f ./framework-integration/openvino-dev-latest/openvino-tensorflow/classification/dockerfile/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile -t $REGISTRY_URL/ovtf-classification:custom .
 ```
 
 Push the container to your devcloud private registry:
 ```
-buildah push $REGISTRY_URL/ovtf-object-detection:custom
+buildah push $REGISTRY_URL/ovtf-classification:custom
 ```
 
-Navigate to **My Library** > **Resources** and associate the ``ovtf-object-detection:custom`` resource with a project, configure the **Mount Point** with ``/mount_folder`` and launch.
+Navigate to **My Library** > **Resources** and associate the ``ovtf-classification:custom`` resource with a project, configure the **Mount Point** with ``/mount_folder`` and launch.
 
 **NOTE:** 
 * The container playground will ensure GPU access is enabled by default when launching on a device with an integrated GPU. 
@@ -48,7 +48,7 @@ docker build -f ./framework-integration/openvino-dev-latest/openvino-tensorflow/
 
 Run the container locally by mounting a local directory to retrieve the results:
 ```
-docker run --rm -it -e RUN_ON_PREM=/mount_folder -v {PATH-TO-HOST-DIR}:/mount_folder object-detection:custom
+docker run --rm -it -e RUN_ON_PREM=/mount_folder -v {PATH-TO-HOST-DIR}:/mount_folder ovtf-classification:custom
 ```
 **NOTE:** 
 * To enable GPU access, use runtime sample config by passing ``-e DEVICE=GPU``

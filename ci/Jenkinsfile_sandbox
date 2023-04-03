@@ -1,0 +1,374 @@
+pipeline {
+    agent {
+        node {
+            label 'devcloud-agent-medium'
+        }
+    }
+    environment {
+        devcloudSAtoken = credentials('devcloudSandboxToken')
+        SYSDIG_TOKEN = credentials('SYSDIG_TOKEN')
+        REGISTRY = 'default-route-openshift-image-registry.apps.sandbox.cfa.devcloud.intel.com'
+	OV_VERSION = '2022.3.0'
+        OV_PREV_VERSION = '2022.1.0'
+        Github_Token = credentials('sys_github_onesource')
+    }
+    stages {
+        stage('Git Clone') { 
+            steps { 
+               echo 'build stage-pull the code from github'
+               sh'''
+                 pwd
+                 rm -rf *
+                 mkdir artifacts
+
+                 git clone https://$Github_Token@github.com/intel-innersource/containers.docker.devcloud.reference-samples.git -b ${branch}
+                 docker login https://${REGISTRY} -u devcloud -p ${devcloudSAtoken}
+	             '''
+            }
+        }
+        stage('openvino_base_image') {
+            when {
+                expression { openvino_base_image == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash				
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                docker pull docker.io/openvino/ubuntu20_dev:2022.3.0
+                
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} docker.io/openvino/ubuntu20_dev:2022.3.0
+                
+                set -x
+
+                docker pull docker.io/openvino/ubuntu20_runtime:${OV_VERSION}
+
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} docker.io/openvino/ubuntu20_runtime:${OV_VERSION}
+
+                '''
+            }
+        }
+        stage('benchmark_python') {
+            when {
+                expression { openvino_latest_benchmark_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                cp ./developer-samples/python/benchmark/scripts/build_benchmark_latest.sh .
+                chmod +x build_benchmark_latest.sh
+                ./build_benchmark_latest.sh
+		            echo ${OV_VERSION}
+                docker tag benchmarking_${OV_VERSION}:latest ${REGISTRY}/devcloud-samples/benchmark-test:${OV_VERSION}
+                
+                set -x
+                rm -rf *-scan-result.pdf
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/benchmark-test:${OV_VERSION}
+                
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/benchmark-test:${OV_VERSION}
+                '''
+            }
+        }
+	stage('object-detection-python') {
+            when {
+                expression { openvino_latest_object_detection_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                cp ./developer-samples/python/object-detection/scripts/build_object_detection.sh .
+                chmod +x build_object_detection.sh
+                ./build_object_detection.sh
+                docker tag object_detection_${OV_VERSION}:latest ${REGISTRY}/devcloud-samples/object-detection:${OV_VERSION}
+                
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/object-detection:${OV_VERSION}
+                
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/object-detection:${OV_VERSION}
+                '''
+            }
+        }
+        stage('people_counter') {
+            when {
+                expression { people_counter_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                cp ./developer-samples/python/people-counter/scripts/build_people_counter.sh .
+                chmod +x build_people_counter.sh
+                ./build_people_counter.sh
+                docker tag people-counter_${OV_VERSION}:latest ${REGISTRY}/devcloud-samples/people-counter:${OV_VERSION}
+                
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/people-counter:${OV_VERSION}
+                
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/people-counter:${OV_VERSION}
+                '''
+            }
+        }
+        stage('safety_gear_detect') {
+            when {
+                expression { safety_gear_detect_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                cp ./developer-samples/python/safety-gear-detection/scripts/build_safety_gear_detection.sh .
+                chmod +x build_safety_gear_detection.sh
+                ./build_safety_gear_detection.sh
+                docker tag safety_gear_detection_${OV_VERSION}:latest ${REGISTRY}/devcloud-samples/safety-gear-detect:${OV_VERSION}
+                
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/safety-gear-detect:${OV_VERSION}
+                
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/safety-gear-detect:${OV_VERSION}
+                '''
+            }
+        }
+        stage('dlstreamer') {
+            when {
+                expression { dlstreamer_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                cp ./tutorials/python/dlstreamer/scripts/build_dlstreamer.sh .
+                chmod +x build_dlstreamer.sh
+                ./build_dlstreamer.sh
+
+                docker tag dlstreamer_${OV_VERSION}:latest ${REGISTRY}/devcloud-samples/dlstreamer:${OV_VERSION}
+
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/dlstreamer:${OV_VERSION}
+
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/dlstreamer:${OV_VERSION}
+
+                '''
+            }
+        }
+        stage('tiny_yolo_v3') {
+            when {
+                expression { tiny_yolo_v3_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                cp ./developer-samples/python/tiny-yolo-v3/scripts/build_tiny-yolo.sh .
+                chmod +x build_tiny-yolo.sh
+                ./build_tiny-yolo.sh
+                docker tag tiny-yolo-v3_${OV_VERSION}:latest ${REGISTRY}/devcloud-samples/tiny-yolo-v3:${OV_VERSION}
+                
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/tiny-yolo-v3:${OV_VERSION}
+                
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/tiny-yolo-v3:${OV_VERSION}
+                '''
+            }
+        }
+        stage('pneumonia_classification') {
+            when {
+                expression { pneumonia_classification_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples/container-workloads/openvino-dev-latest/
+                cp ./developer-samples/python/pneumonia-classification/scripts/build_pneumonia_classification.sh .
+                chmod +x build_pneumonia_classification.sh
+                ./build_pneumonia_classification.sh
+                docker tag pneumonia_classification_${OV_VERSION}:latest ${REGISTRY}/devcloud-samples/pneumonia-classification:${OV_VERSION}
+                
+                set -x				
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                chmod +x ./ci/sysdig/scan.sh
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/pneumonia-classification:${OV_VERSION}
+                
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/pneumonia-classification:${OV_VERSION}
+                '''
+            }
+        }
+        stage('ovtf_classification') {
+            when {
+                expression { ovtf_classification_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                set -x
+		            pwd
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                cp $WORKSPACE/containers.docker.devcloud.reference-samples/framework-integration/openvino-dev-latest/openvino-tensorflow/classification/scripts/build_ovtf_classification.sh .
+                chmod +x build_ovtf_classification.sh
+                ./build_ovtf_classification.sh
+
+                docker tag ovtf-classification:${OV_VERSION} ${REGISTRY}/devcloud-samples/ovtf-classification:${OV_VERSION}
+
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-classification:${OV_VERSION}
+
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/ovtf-classification:${OV_VERSION}
+                '''
+            }
+        }
+        stage('ovtf_object_detection') {
+            when {
+                expression { ovtf_object_detection_python == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                cp $WORKSPACE/containers.docker.devcloud.reference-samples/framework-integration/openvino-dev-latest/openvino-tensorflow/object-detection/scripts/build_ovtf_object_detection.sh .
+                chmod +x build_ovtf_object_detection.sh
+                ./build_ovtf_object_detection.sh
+
+                docker tag ovtf-object-detection:${OV_VERSION} ${REGISTRY}/devcloud-samples/ovtf-object-detection:${OV_VERSION}
+
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ovtf-object-detection:${OV_VERSION}
+
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/ovtf-object-detection:${OV_VERSION}
+
+                '''
+            }
+        }
+	      stage('ov_onnx_fp32_cpu_cpp') {
+            when {
+                expression { ov_onnx_fp32_cpu_cpp == 'true' }
+            }
+            steps {
+                sh'''#!/bin/bash
+                cd $WORKSPACE
+		            wget https://github.com/intel/onnxruntime/releases/download/v4.0/linux_binaries_uep_v4.0.tar.gz
+		            tar -xzf linux_binaries_uep_v4.0.tar.gz
+		            mkdir $WORKSPACE/containers.docker.devcloud.reference-samples/framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries
+		            cp linux_binaries_uep_v4.0/* $WORKSPACE/containers.docker.devcloud.reference-samples/framework-integration/openvino-dev-latest/onnxrt/classification/ort-Libraries
+		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                
+                cp $WORKSPACE/containers.docker.devcloud.reference-samples/framework-integration/openvino-dev-latest/onnxrt/classification/scripts/build_onnxrt_ovep_classification.sh .
+                chmod +x build_onnxrt_ovep_classification.sh
+                ./build_onnxrt_ovep_classification.sh
+                docker tag onnxrt-ovep-classification:${OV_VERSION} ${REGISTRY}/devcloud-samples/ov-onnx-fp32-cpu-cpp:${OV_VERSION}
+                
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ov-onnx-fp32-cpu-cpp:${OV_VERSION}
+
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/ov-onnx-fp32-cpu-cpp:${OV_VERSION}
+
+                '''
+            }
+        }
+	      stage('ov_onnx_fp32_cpu_py') {
+            when {
+                expression { ov_onnx_fp32_cpu_py == 'true' }
+            }
+            steps {
+		          sh'''#!/bin/bash
+                cd $WORKSPACE/containers.docker.devcloud.reference-samples
+                set -x
+                
+                cp $WORKSPACE/containers.docker.devcloud.reference-samples/framework-integration/openvino-dev-latest/onnxrt/object-detection/scripts/build_onnxrt_ovep_object_detection.sh .
+                chmod +x build_onnxrt_ovep_object_detection.sh
+                ./build_onnxrt_ovep_object_detection.sh
+                docker tag onnxrt-ovep-object-detection:${OV_VERSION} ${REGISTRY}/devcloud-samples/ov-onnx-fp32-cpu-py:${OV_VERSION}
+                
+                set -x
+                chmod +x ./ci/sysdig/scan.sh
+
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ov-onnx-fp32-cpu-py:${OV_VERSION}
+
+                set -x
+                docker push ${REGISTRY}/devcloud-samples/ov-onnx-fp32-cpu-py:${OV_VERSION}
+                '''
+            }
+        }
+        stage('ov_torch_ort_image_classification') {
+           when {
+              expression { ov_torch_ort_image_classification_python == 'true' }
+           }
+           steps {
+           	sh'''#!/bin/bash
+		          cd $WORKSPACE/containers.docker.devcloud.reference-samples
+            	set -x
+           	  cp $WORKSPACE/containers.docker.devcloud.reference-samples/framework-integration/openvino-dev-latest/openvino-torch-ort/image-classification/scripts/build_ov_torch_ort_image_classification.sh .
+
+            	chmod +x build_ov_torch_ort_image_classification.sh
+            	./build_ov_torch_ort_image_classification.sh
+            	docker tag ov-torch-ort-image-classification:${OV_VERSION} ${REGISTRY}/devcloud-samples/ov_torch_ort_image_classification:${OV_VERSION}
+            	
+            	set -x
+            	chmod +x ./ci/sysdig/scan.sh
+            	#./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ov_torch_ort_image_classification:${OV_VERSION}
+           
+            	set -x
+            	docker push ${REGISTRY}/devcloud-samples/ov_torch_ort_image_classification:${OV_VERSION}
+            	'''
+          }
+      }
+      stage('ov_torch_ort_sequence_classification') {
+          when {
+             expression { ov_torch_ort_sequence_classification_python == 'true' }
+          } 
+          steps 
+	        {
+            sh'''#!/bin/bash
+	          cd $WORKSPACE/containers.docker.devcloud.reference-samples
+            set -x
+            cp $WORKSPACE/containers.docker.devcloud.reference-samples/framework-integration/openvino-dev-latest/openvino-torch-ort/sequence-classification/scripts/build_ov_torch_ort_sequence-classification.sh .
+            chmod +x build_ov_torch_ort_sequence-classification.sh
+            ./build_ov_torch_ort_sequence-classification.sh
+            docker tag ov-torch-ort-sequence-classification:${OV_VERSION} ${REGISTRY}/devcloud-samples/ov_torch_ort_sequence_classification:${OV_VERSION}
+            
+            set -x
+            chmod +x ./ci/sysdig/scan.sh
+            #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} ${REGISTRY}/devcloud-samples/ov_torch_ort_sequence_classification:${OV_VERSION}
+            
+            set -x
+            docker push ${REGISTRY}/devcloud-samples/ov_torch_ort_sequence_classification:${OV_VERSION}
+            '''
+        }
+     }
+    }
+}

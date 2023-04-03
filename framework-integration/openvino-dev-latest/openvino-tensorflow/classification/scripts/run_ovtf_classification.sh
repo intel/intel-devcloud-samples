@@ -1,1 +1,2 @@
-sudo docker run -it ovtf-classification_2021.4.1
+tag=2022.1
+sudo docker run -it ovtf-classification:$tag

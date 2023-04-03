@@ -12,7 +12,7 @@ cp -ir $INPUT_FILE /mount_folder/
 export LABELS="/classification-ovtf/data/"$LABELS
 
 
-source /opt/intel/openvino/bin/setupvars.sh
+source /opt/intel/openvino/setupvars.sh
 
 echo "Using Openvino Integration with Tensorflow"
 

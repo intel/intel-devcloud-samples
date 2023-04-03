@@ -22,7 +22,7 @@ NUMSTREAMS=1
 LABEL_FILE="coco.names"
 source /opt/intel/openvino_$OPENVINO_VERSION/setupvars.sh
 
-tf_config="/usr/local/lib/python3.6/dist-packages/openvino/tools/mo/front/tf/yolo_v3_tiny.json"
+tf_config="/usr/local/lib/python3.8/dist-packages/openvino/tools/mo/front/tf/yolo_v3_tiny.json"
 
 #Download Tiny YOLO V3 Darknet Model Weights and COCO labels file
 curl https://pjreddie.com/media/files/yolov3-tiny.weights > yolov3-tiny.weights
@@ -30,7 +30,7 @@ curl https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names> 
 
 #clone the tensorflow-yolo-v3 repository to access the convert_weights_pb.py python script that can convert all different types of YOLO and Tiny YOLO models to frozen Tensorflow Protobuf files (.pb)
 git clone https://github.com/mystic123/tensorflow-yolo-v3.git
-python3.6 tensorflow-yolo-v3/convert_weights_pb.py --class_names coco.names --data_format NHWC --weights_file yolov3-tiny.weights --tiny 
+python3 tensorflow-yolo-v3/convert_weights_pb.py --class_names coco.names --data_format NHWC --weights_file yolov3-tiny.weights --tiny 
 
 
 

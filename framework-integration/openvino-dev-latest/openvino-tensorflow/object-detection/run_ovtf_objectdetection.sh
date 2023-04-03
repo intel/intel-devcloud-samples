@@ -11,7 +11,7 @@ export MODEL="/object-detection-ovtf/data/"$MODEL
 export LABELS="/object-detection-ovtf/data/"$LABELS
 
 
-source /opt/intel/openvino/bin/setupvars.sh
+source /opt/intel/openvino/setupvars.sh
 
 
 echo "Using Openvino Integration with Tensorflow"
