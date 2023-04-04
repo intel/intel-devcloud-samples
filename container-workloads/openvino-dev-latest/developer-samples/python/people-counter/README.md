@@ -4,7 +4,7 @@ This sample application demonstrates how a smart video IoT solution may be creat
 ## How It Works
 The sample uses an Intel pre-trained model from the [Open Model Zoo](https://github.com/openvinotoolkit/open_model_zoo).  The model is a pedestrian detector for the Retail scenario. It is based on MobileNetV2-like backbone that includes depth-wise convolutions to reduce the amount of computation for the 3x3 convolution block. The single SSD head from 1/16 scale feature map has 12 clustered prior boxes. For more information about this model see the documentation for [person-detection-retail-0013](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/intel/person-detection-retail-0013/README.md) model.
 
-* [openvino_cgvh_dev_2022.3.dockerfile](dockerfile/ubuntu18/openvino_cgvh_dev_2022.3.dockerfile): Utilizes [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
+* [openvino_cgvh_dev_2022.3.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile): Utilizes [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
 * [run_people_counter.sh](run_people_counter.sh): Serves as an entrypoint for the container sample, uses the model downloader utility to download the person detection model, creates the data output folder, and launches the python inference script.   
 * [people_counter.py](people_counter.py): Demonstrates asynchronous inference pipeline on input video file, saves the output video with bounding boxes and labels to output.mp4, and generates a ``perfomance.txt`` file capturing latency and throughput metrics.
 
