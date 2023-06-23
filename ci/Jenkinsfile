@@ -9,8 +9,8 @@ pipeline {
         SYSDIG_TOKEN = credentials('SYSDIG_TOKEN')
         Github_Token = credentials('sys_github_onesource')
         REGISTRY = 'default-route-openshift-image-registry.apps.cfa.devcloud.intel.com'
-        OV_VERSION = '2022.3.0'
-        OV_PREV_VERSION = '2022.1.0'
+        OV_VERSION = '2023.0.0'
+        OV_PREV_VERSION = '2022.3.0'
     }
     stages {
 	    stage('Git Clone') { 
