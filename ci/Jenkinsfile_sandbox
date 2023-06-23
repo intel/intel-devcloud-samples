@@ -8,8 +8,8 @@ pipeline {
         devcloudSAtoken = credentials('devcloudSandboxToken')
         SYSDIG_TOKEN = credentials('SYSDIG_TOKEN')
         REGISTRY = 'default-route-openshift-image-registry.apps.sandbox.cfa.devcloud.intel.com'
-	OV_VERSION = '2022.3.0'
-        OV_PREV_VERSION = '2022.1.0'
+	OV_VERSION = '2023.0.0'
+        OV_PREV_VERSION = '2022.3.0'
         Github_Token = credentials('sys_github_onesource')
     }
     stages {
@@ -34,12 +34,12 @@ pipeline {
                 sh'''#!/bin/bash				
 		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
                 set -x
-                docker pull docker.io/openvino/ubuntu20_dev:2022.3.0
+                docker pull docker.io/openvino/ubuntu20_dev:2023.0.0
                 
 		            cd $WORKSPACE/containers.docker.devcloud.reference-samples
                 set -x
                 chmod +x ./ci/sysdig/scan.sh
-                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} docker.io/openvino/ubuntu20_dev:2022.3.0
+                #./ci/sysdig/scan.sh -t ${SYSDIG_TOKEN} docker.io/openvino/ubuntu20_dev:2023.0.0
                 
                 set -x
 
