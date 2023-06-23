@@ -45,7 +45,7 @@ then
    mkdir -p $XML_IR_FP16 
    mo \
    --input_model $RUN_ON_PREM/raw_models/public/mobilenet-ssd/mobilenet-ssd.caffemodel \
-   --data_type $FP16 \
+   --compress_to_fp16 \
    --output_dir $XML_IR_FP16 \
    --scale 256 \
    --mean_values [127,127,127]

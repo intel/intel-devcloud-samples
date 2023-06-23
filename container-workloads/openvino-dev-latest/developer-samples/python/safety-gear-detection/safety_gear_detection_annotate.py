@@ -83,10 +83,9 @@ def post_process(input_stream, input_data, out_path, scale_frame_rate, scale_res
         
         # report progress
        # progressUpdate(progress_data, int(time.time()-post_process_time_start), frame_count, video_len)
-
-        key = cv2.waitKey(1)
-        if key == 27:
-            break
+       # key = cv2.waitKey(1)
+       # if key == 27:
+        #    break
     print("Post processing time: {0} sec" .format(time.time()-post_process_time_start))
     cap.release()
     vw.release()

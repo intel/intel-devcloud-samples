@@ -2,7 +2,7 @@
 #SPDX-License-Identifier: MIT
 
 #Building openvino base image from public source
-FROM openvino/ubuntu20_dev:2023.0.0
+FROM openvino/ubuntu20_dev:2022.3.0
 RUN echo "OpenVINO installation done  ......."
 RUN echo "Intel devcloud Sample containerization begin ......."
 
@@ -40,7 +40,7 @@ ENV DEVICE=$DEVICE
 ARG PRECISION="FP32"
 ENV PRECISION="$PRECISION"
 
-ARG OPENVINO_VERSION="2023"
+ARG OPENVINO_VERSION="2022.3.0.9038"
 ENV OPENVINO_VERSION=$OPENVINO_VERSION
 
 ARG OUTPUT_FOLDER="output_yolo-v8_latest"

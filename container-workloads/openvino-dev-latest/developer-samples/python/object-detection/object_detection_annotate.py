@@ -2,8 +2,7 @@ import io
 import os
 import sys
 import time
-from argparse import ArgumentParser
-
+from argparse import ArgumentParser 
 import cv2
 import numpy as np
 #from qarpo.demoutils import progressUpdate
@@ -145,10 +144,10 @@ def post_process(
             frame_count,
             video_len,
         )'''
-
-        key = cv2.waitKey(1)
-        if key == 27:
-            break
+       # print("OpenCV Version: ", cv2.__version__)
+        #key = cv2.waitKey(1)
+        #if key == 27:
+           # break
     print(f"Post processing time: {time.time() - post_process_time_start} sec")
     cap.release()
     vw.release()

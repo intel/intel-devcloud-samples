@@ -4,7 +4,7 @@ Use an optimized and pre-trained MobileNet-SSD neural network to detect people a
 ## How It Works
 The sample converts a **mobilenet-ssd** caffe model for optimized inference and feeds a video frame-by-frame to the OpenVINO Inference Engine. The identified results i.e. detected people and their safety gear (e.g. vest, hardhat) are stored to a text file which are used later to annotate all the frames of the original video.
 
-* [openvino_cgvh_dev_2022.3.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile): Utilizes [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
+* [openvino_cgvh_dev_2023.0.0.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile): Utilizes [openvino/ubuntu20_dev:2023.0.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
 * [run_safety_gear_detection.sh](run_safety_gear_detection.sh): Serves as an entrypoint for the container sample, utilizes the pre-installed model optimizer to convert the mobilenet-ssd [caffe model](resources/worker_safety_mobilenet.caffemodel) before running inference and annotation python scripts.
 * [safety_gear_detection.py](safety_gear_detection.py): Demonstrates asynchronous inference pipeline on input video file, and saves an ``output.txt`` file during execution with resulting bounding box coordinates, detected labels corresponding to IDs from [labels.txt](labels.txt), detection probabilities along with ``perfomance.txt`` capturing latency and throughput metrics.
 * [safety_gear_detection_annotate.py](safety_gear_detection_annotate.py): Reads the original video file, annotates frame-by-frame inference results (e.g. bounding boxes, label text) and saves a new output.mp4 file after execution.
@@ -40,16 +40,16 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 ## Build and run on local system
 Navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-docker build -f ./developer-samples/python/safety-gear-detection/dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile -t safety-gear-detection:custom .
+docker build -f ./developer-samples/python/safety-gear-detection/dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile -t safety-gear-detection:custom .
 ```
 
 Run the container locally by mounting a local directory to retrieve the results:
 ```
-docker run --rm -it -e RUN_ON_PREM=/mount_folder -v {PATH-TO-HOST-DIR}:/mount_folder safety-gear-detection:custom
+docker run --rm -it -v ./mount_folder:/mount_folder safety-gear-detection:custom
 ```
 **NOTE:** 
 * To enable GPU access, use runtime sample config by passing ``-e DEVICE=GPU``
-* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
+* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2023.0.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
 
 
 ---

@@ -33,7 +33,7 @@ then
    mo  \
    --input_model model.pb \
    --input_shape=[1,224,224,3] \
-   --data_type $FP16 \
+   --compress_to_fp16 \
    -o  $XML_IR_FP16\
    --mean_values [123.75,116.28,103.58] \
    --scale_values [58.395,57.12,57.375]

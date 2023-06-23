@@ -33,7 +33,7 @@ then
    mkdir -p $Output_folder_16
    mkdir -p $XML_IR_FP16
    mo \
-   --data_type $FP16 \
+   --compress_to_fp16 \
    --input_model $RUN_ON_PREM/models/public/resnet-50-tf/resnet_v1-50.pb  \
    --input_shape=[1,224,224,3] \
    --mean_values=[123.68,116.78,103.94] \

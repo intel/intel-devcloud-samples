@@ -35,7 +35,7 @@ then
    mo \
    --input_model resources/worker_safety_mobilenet.caffemodel \
    --model_name mobilenet-ssd \
-   --data_type $FP16 \
+   --compress_to_fp16 \
    --output_dir $XML_IR_FP16 \
 
    python3 $Sample_name  -i $INPUT_FILE  -m  $IR_FP16  --labels labels.txt -o $Output_folder_16 -d $DEVICE -nireq $NUM_REQS
