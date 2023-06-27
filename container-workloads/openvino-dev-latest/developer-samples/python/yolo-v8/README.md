@@ -17,7 +17,7 @@ The YOLO V8 Object Detection application uses the Intel® Distribution of OpenVI
 
 The following files are used in the application:
 
-* [openvino_cgvh_dev_2022.3.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile): Utilizes [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
+* [openvino_cgvh_dev_2023.0.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.dockerfile): Utilizes [openvino/ubuntu20_dev:2023.0.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
 * [run_yolo_v8.sh](run_yolo_v8.sh): Serves as an entrypoint for the container sample. The script:
 	* Creates the output folder
 	* Launches object_detection_demo_yolov8.py
@@ -34,7 +34,7 @@ The following files are used in the application:
 ## Build and run on DevCloud
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-buildah bud --format docker -f  ./developer-samples/python/yolo-v8/dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile -t $REGISTRY_URL/yolo-v8:custom .
+buildah bud --format docker -f  ./developer-samples/python/yolo-v8/dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.dockerfile -t $REGISTRY_URL/yolo-v8:custom .
 ```
 
 Push the container to your devcloud private registry:
@@ -54,16 +54,16 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 ## Build and run on local system
 Navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-docker build -f ./developer-samples/python/yolo-v8/dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile -t $REGISTRY_URL/yolo-v8:custom .
+docker build -f ./developer-samples/python/yolo-v8/dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.dockerfile -t $REGISTRY_URL/yolo-v8:custom .
 ```
 
 Run the container locally by mounting a local directory to retrieve the results:
 ```
-docker run --rm -it -e RUN_ON_PREM=/mount_folder -v {PATH-TO-HOST-DIR}:/mount_folder yolo-v8:custom
+docker run --rm -it -v ./mount_folder:/mount_folder yolo-v8:custom
 ```
 **NOTE:** 
 * To enable GPU access, use runtime sample config by passing ``-e DEVICE=GPU``
-* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
+* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2023.0.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
 
 
 ---
