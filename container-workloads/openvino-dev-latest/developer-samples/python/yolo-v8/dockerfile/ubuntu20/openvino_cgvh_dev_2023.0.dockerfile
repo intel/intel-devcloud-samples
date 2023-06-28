@@ -10,11 +10,6 @@ USER root
 
 RUN chmod 777 ${INTEL_OPENVINO_DIR}/python
 
-ENV HTTP_PROXY="http://proxy-chain.intel.com:911"
-ENV HTTPS_PROXY="http://proxy-chain.intel.com:911"
-ENV http_proxy="http://proxy-chain.intel.com:911"
-ENV https_proxy="http://proxy-chain.intel.com:911"
-
 # Install git 
 RUN apt-get update && \
     apt-get upgrade -y && \
