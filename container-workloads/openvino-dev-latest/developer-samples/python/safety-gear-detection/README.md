@@ -20,7 +20,7 @@ The sample converts a **mobilenet-ssd** caffe model for optimized inference and 
 ## Build and run on DevCloud
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-buildah bud --format docker -f ./developer-samples/python/safety-gear-detection/dockerfile/ubuntu20/openvino_cgvh_dev_2022.3.dockerfile -t $REGISTRY_URL/safety-gear-detection:custom .
+buildah bud --format docker -f ./developer-samples/python/safety-gear-detection/dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile -t $REGISTRY_URL/safety-gear-detection:custom .
 ```
 
 Push the container to your devcloud private registry:
