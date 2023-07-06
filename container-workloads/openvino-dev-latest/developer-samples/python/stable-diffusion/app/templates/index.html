@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stable Diffusion</title>
+  <style>
+    body {
+      background-color: #0F7DC2;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    header {
+      padding: 20px;
+      font-size: 30px;
+      background-color: #0071C5;
+    }
+
+    .description {
+      margin: 20px 20% 5% 20%;
+      font-size: 20px;
+    }
+
+    .input-header {
+      font-size: 20px;
+      margin-top: 10px;
+      margin-left: 11%;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    textarea {
+      margin-top: 10px;
+      margin-right: 10px;
+      margin-bottom: 5px;
+      padding: 10px;
+      font-size: 16px;
+      width: 70%;
+    }
+
+    #image-container {
+      margin: 10px 10%;
+      padding: 10px;
+      width: 80%;
+      height: 400px; 
+      display: inline-block;
+      text-align: center;
+    }
+
+    #result-image {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    h2 {
+      font-size: 1.4rem;  
+    }
+
+    input[type="submit"], #download-btn {
+      transform: scale(1.2);
+      margin-top: 2.5%;
+      margin-left: 20px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #form-and-image {
+      text-align: center;
+    }
+
+    .text-submit-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .text-submit-container textarea {
+      margin-right: 20px;
+    }
+
+  </style>
+  <script>
+    async function submitForm(event) {
+      event.preventDefault();
+      const text_input = document.getElementById("text_input").value;
+      const response = await fetch("/process", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text_input }),
+      });
+      const result = await response.blob();
+      var objectURL = URL.createObjectURL(result);
+      document.getElementById("result-image").src = objectURL;
+      document.getElementById("download-btn").href = objectURL;
+    }
+  </script>
+</head>
+<body>
+  <header>
+    Stable Diffusion
+  </header>
+  <div class="description">
+    A sample microservice that generates images from text inputs. Ex: A sunset beach with unicorns riding.
+  </div>
+  <div id="form-and-image">
+    <form onsubmit="submitForm(event)">
+      <div class="input-header">Text Input</div>
+      <div class="text-submit-container">
+        <textarea name="text_input" id="text_input" rows="4" placeholder="Enter your text here..."></textarea>
+        <input type="submit" value="Submit">
+      </div>
+    </form>
+    <h2>Generated Image:</h2>
+    <div id="image-container">
+      <img id="result-image" alt="Generated image will appear here." />
+    </div>
+    <div>
+      <a id="download-btn" download="image.png">Download Image</a>
+    </div>
+  </div>
+</body>
+</html>

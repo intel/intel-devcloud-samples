@@ -1,0 +1,17 @@
+model: 'bes-dev/stable-diffusion-v1-4-openvino'
+device: 'CPU'
+seed: 42
+beta_start: 0.00085
+beta_end: 0.012
+beta_schedule: 'scaled_linear'
+num_inference_steps: 32
+guidance_scale: 7.5
+eta: 0.0
+tokenizer: 'openai/clip-vit-large-patch14'
+params_from: null
+init_image: null
+strength: 0.5
+mask: null
+output: 'output/output.png'
+
+
