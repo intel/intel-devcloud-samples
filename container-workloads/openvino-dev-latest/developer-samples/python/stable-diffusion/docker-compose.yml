@@ -3,7 +3,7 @@ version: "3.8"
 services:
   stable_diffusion:
     build: ./app
-    container_name: stable_diffusion
+    container_name: stable-diffusion
     ports:
       - "5000:5000"
       - "8000:8000"
