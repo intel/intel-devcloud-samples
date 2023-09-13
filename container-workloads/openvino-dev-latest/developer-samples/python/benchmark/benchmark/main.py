@@ -348,7 +348,7 @@ def run(args):
        
        # job_id = str(os.environ['PBS_JOBID']).split('.')[0]
         #with open(os.path.join('./results/stats.json'), 'w') as f:
-        with open('stats.json', 'w') as f:
+        with open('/mount_folder/stats.json', 'w') as f:
              json.dump(duration_ms, f)
         logger.info("First inference took {} ms".format(duration_ms))
         if statistics:
@@ -414,7 +414,7 @@ def run(args):
                 f.write('Latency: {:.2f} ms\n'.format(latency_ms))
                 f.write('Throughput: {:.2f} FPS \n'.format(fps))
 
-        with open('stats.json', 'w') as f:
+        with open('/mount_folder/stats.json', 'w') as f:
             json.dump(stats, f)
 
         del exe_network
