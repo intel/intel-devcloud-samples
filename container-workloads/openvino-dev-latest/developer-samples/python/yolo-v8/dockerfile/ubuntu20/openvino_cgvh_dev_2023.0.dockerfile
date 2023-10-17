@@ -16,7 +16,7 @@ RUN apt-get update && \
     apt-get install -y git
 
 RUN pip install openvino-dev[caffe]
-RUN pip install ultralytics
+RUN pip install ultralytics==8.0.123
 RUN pip install numpy
 RUN pip install opencv-python
 RUN pip install Pillow
