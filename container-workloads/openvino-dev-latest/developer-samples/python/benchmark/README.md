@@ -11,7 +11,7 @@ The benchmarking application performs the following steps:
 
 The following files are used in the application:
 
-* [openvino_cgvh_dev_2023.0.0.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile): Utilizes [openvino/ubuntu20_dev:2023.0.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
+* [openvino_cgvh_dev_2023.2.0.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2023.2.0.dockerfile): Utilizes [openvino/ubuntu20_dev:2023.2.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
 * [benchmark.sh](benchmark.sh): Serves as an entrypoint for the container sample. This script launches all of the operations above. Set the desiered model here. 
 
 * [benchmark_app.sh](benchmark_app.sh): OpenVINO utility that runs the benchmarking on 
@@ -28,7 +28,7 @@ The following files are used in the application:
 ## Build and run on DevCloud
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-buildah bud --format docker -f  ./developer-samples/python/benchmark/dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile -t $REGISTRY_URL/benchmark:custom .
+buildah bud --format docker -f  ./developer-samples/python/benchmark/dockerfile/ubuntu20/openvino_cgvh_dev_2023.2.0.dockerfile -t $REGISTRY_URL/benchmark:custom .
 ```
 
 Push the container to your devcloud private registry:
@@ -48,7 +48,7 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 ## Build and run on local system
 Navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-docker build -f ./developer-samples/python/benchmark/dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile -t $REGISTRY_URL/benchmark:custom .
+docker build -f ./developer-samples/python/benchmark/dockerfile/ubuntu20/openvino_cgvh_dev_2023.2.0.dockerfile -t $REGISTRY_URL/benchmark:custom .
 ```
 
 Run the container locally by mounting a local directory to retrieve the results:
@@ -57,7 +57,7 @@ docker run --rm -it -v ./mount_folder:/mount_folder benchmark:custom
 ```
 **NOTE:** 
 * To enable GPU access, use runtime sample config by passing ``-e DEVICE=GPU``
-* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2023.0.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
+* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2023.2.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
 
 
 ---

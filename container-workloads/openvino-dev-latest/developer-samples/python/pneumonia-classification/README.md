@@ -17,7 +17,7 @@ At startup the pneumonia classification application configures itself by parsing
 
 The application uses the following files: 
 
-* [openvino_cgvh_dev_2023.0.0.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile): Utilizes [openvino/ubuntu20_dev:2023.0.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
+* [openvino_cgvh_dev_2023.2.0.dockerfile](dockerfile/ubuntu20/openvino_cgvh_dev_2023.2.0.dockerfile): Utilizes [openvino/ubuntu20_dev:2023.2.0](https://hub.docker.com/r/openvino/ubuntu20_dev) as the base image and defines configurable runtime environment variables.
 * [classification_pneumonia.py](classification_pneumonia.py): run classification using the DenseNet model.
 * [utils.py}(utils.py): Provides image transform utilities 
 * [utils_image.py](utils_image.py): Provides code to display the results 
@@ -35,7 +35,7 @@ The application uses the following files:
 ## Build and run on DevCloud
 Using the terminal from the DevCloud [Coding Environment](https://www.intel.com/content/www/us/en/develop/documentation/devcloud-containers/top/index/build-containers-from-terminal.html), navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-buildah bud --format docker -f ./developer-samples/python/pneumonia-classification/dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile -t $REGISTRY_URL/pneumonia-classification:custom .
+buildah bud --format docker -f ./developer-samples/python/pneumonia-classification/dockerfile/ubuntu20/openvino_cgvh_dev_2023.2.0.dockerfile -t $REGISTRY_URL/pneumonia-classification:custom .
 ```
 
 Push the container to your devcloud private registry:
@@ -55,7 +55,7 @@ and [select-hardware-and-launch](https://www.intel.com/content/www/us/en/develop
 ## Build and run on local system
 Navigate to `{repo-root}/container-workloads/openvino-dev-latest` directory and build:
 ```
-docker build -f ./developer-samples/python/pneumonia-classification/dockerfile/ubuntu20/openvino_cgvh_dev_2023.0.0.dockerfile -t pneumonia-classification:custom .
+docker build -f ./developer-samples/python/pneumonia-classification/dockerfile/ubuntu20/openvino_cgvh_dev_2023.2.0.dockerfile -t pneumonia-classification:custom .
 ```
 
 Run the container locally by mounting a local directory to retrieve the results:
@@ -64,7 +64,7 @@ docker run --rm -it -v ./mount_folder:/mount_folder pneumonia-classification:cus
 ```
 **NOTE:** 
 * To enable GPU access, use runtime sample config by passing ``-e DEVICE=GPU``
-* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2022.3.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
+* You must also mount your integrated GPU device e.g.  ``--device /dev/dri:/dev/dri``, see [openvino/ubuntu20_dev:2023.2.0](https://hub.docker.com/r/openvino/ubuntu20_dev) for more info.
 
 
 ---
