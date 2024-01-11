@@ -6,8 +6,8 @@ import cv2
 import torch
 import time
 from argparse import ArgumentParser
-from ultralytics.yolo.utils import ops
-from ultralytics.yolo.utils.plotting import colors
+from ultralytics.utils import ops
+from ultralytics.utils.plotting import colors
 from openvino.runtime import Core, Model
 from ultralytics import YOLO
 from pathlib import Path
