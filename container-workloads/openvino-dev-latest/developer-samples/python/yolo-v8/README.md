@@ -14,9 +14,8 @@ The YOLO V8 Object Detection application uses the Intel® Distribution of OpenVI
 1) Click "Develop AI Application" from HomePage of Developer Toolbox
 2) Click YOLOV8 Object Detection by navigating the next arrow button 
 3) Click on "Benchmark on Intel Hardware" on the far right 
-4) Writes output image files with bounding boxes and labels displayed.
-5) Configure the workload by choosing from the drop down list of Filters for "Rocessors", "Graphics", "Memory" and "Power"
-6) Launch the workload
-7) Click on the "blue downward arrow" under "Application" to view the status of the deployment, It would be one of "Deployed/running/Completed"
-8) Telemetry results and details can be viewed with "Telemetry"  from the "Output" tab
-9) Deployment logs and other details  can be viewed with "Deployments" button "Output" tab 
+4) Configure the workload by choosing from the drop down list of Filters for "Processors", "Graphics", "Memory" and "Power"
+5) Launch the workload
+6) Click on the "blue downward arrow" under "Application" to view the status of the deployment, It would be one of "Deployed/Running/Completed"
+7) Telemetry results and details can be viewed with "Telemetry" button under the "Output" tab
+8) Deployment logs and other details  can be viewed with "Deployments" button under the "Output" tab 
