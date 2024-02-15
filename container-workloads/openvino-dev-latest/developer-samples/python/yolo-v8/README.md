@@ -16,6 +16,6 @@ The YOLO V8 Object Detection application uses the Intel® Distribution of OpenVI
 3) Click on "Benchmark on Intel Hardware" on the far right 
 4) Configure the workload by choosing from the drop down list of Filters for "Processors", "Graphics", "Memory" and "Power"
 5) Launch the workload
-6) Click on the "blue downward arrow" under "Application" to view the status of the deployment, It would be one of "Deployed/Running/Completed"
+6) Click on the "blue downward arrow" under "Application" to view the status of the deployment, it would be one of "Deployed/Running/Completed"
 7) Telemetry results and details can be viewed with "Telemetry" button under the "Output" tab
 8) Deployment logs and other details  can be viewed with "Deployments" button under the "Output" tab 
