@@ -1,4 +1,4 @@
-## Overview: YOLO V8 Object Detection 
+## Overview: YOLOv8 Object Detection 
 
 This sample application demonstrates how a smart video IoT solution can be created using Intel® hardware and the Intel® Distribution of OpenVINO™ Toolkit to perform object detection with a pre-trained YOLO V8 model. This solution efficiently detects any number of objects within a video frame, specifically targeting known objects.
 
