@@ -4,7 +4,7 @@ This sample application demonstrates how a smart video IoT solution can be creat
 
 The results for each frame annotate the input video with boxes around detected objects, along with a label and a probability value.
 
-For more information about YOLO, please see [the documentation here](https://pjreddie.com/darknet/yolo/) at the provided link.
+For more information about YOLO, please see [the documentation](https://pjreddie.com/darknet/yolo/).
 
 ## How It Works:
 
