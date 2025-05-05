@@ -1,3 +1,9 @@
+# PROJECT NOT UNDER ACTIVE MANAGEMENT #  
+This project will no longer be maintained by Intel.  
+Intel has ceased development and contributions including, but not limited to, maintenance, bug fixes, new releases, or updates, to this project.  
+Intel no longer accepts patches to this project.  
+ If you have an ongoing need to use this project, are interested in independently developing it, or would like to maintain patches for the open source software community, please create your own fork of this project.  
+  
 ###  Intel® DevCloud Containerized Reference Samples 
 
 The Intel® DevCloud containerized **marketplace** reference samples enables users to seamlessly build and test containerized AI inference workloads on Intel® hardware specialized for deep learning. The containerized refrence samples contain optimized deep-learning models pre-built with the Intel® Distribution of OpenVINO™ toolkit to do the inferencing on Intel® Core™ CPUs i3, i5, i7 and Xeons.
